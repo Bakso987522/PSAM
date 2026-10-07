@@ -1,0 +1,275 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% Kodowanie, język i czcionka
+% ============================================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[default]{lato}
+
+% ============================================================
+% Ustawienia strony
+% ============================================================
+
+\usepackage[
+    a4paper,
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm
+]{geometry}
+
+% ============================================================
+% Interlinia i akapity
+% ============================================================
+
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{parskip}
+
+% ============================================================
+% Listy
+% ============================================================
+
+\usepackage{enumitem}
+
+\setlist[itemize]{
+    topsep=3pt,
+    itemsep=3pt,
+    parsep=0pt
+}
+
+% ============================================================
+% Typografia
+% ============================================================
+
+\usepackage{microtype}
+
+% ============================================================
+% Kolory i nagłówki sekcji
+% ============================================================
+
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+% Definicja koloru nagłówków sekcji (zielony odcień)
+\definecolor{green}{RGB}{34, 139, 34} 
+
+% Zmiana wyglądu sekcji na kolorowy i pogrubiony
+\titleformat{\section}
+  {\Large\bfseries\color{green}} 
+  {\thesection}{1em}{}
+
+% ============================================================
+% Hiperłącza
+% ============================================================
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black,
+    pdftitle={
+        Inteligentna wyszukiwarka środków ochrony roślin (ŚOR)
+        - Opis projektu
+    },
+    pdfauthor={}
+}
+
+% ============================================================
+% Nagłówki i stopki (dodatkowe ulepszenie układu)
+% ============================================================
+
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{} % Wyczyszczenie domyślnych ustawień
+\lhead{\textcolor{gray}{\small Inteligentna wyszukiwarka ŚOR - Opis projektu}} % Lewy nagłówek
+\rfoot{\textbf{\thepage}} % Prawa stopka
+\renewcommand{\headrulewidth}{0.4pt} % Linia pod nagłówkiem
+\renewcommand{\footrulewidth}{0.4pt} % Linia nad stopką
+
+% ============================================================
+% Dokument
+% ============================================================
+
+\begin{document}
+
+% ------------------------------------------------------------
+% Strona tytułowa
+% ------------------------------------------------------------
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \centering
+    \vspace*{2.5cm}
+    
+    {\Huge\bfseries\color{green} Opis projektu}\\[1cm]
+    {\huge Inteligentna wyszukiwarka środków ochrony roślin (ŚOR)}\\[1.5cm]
+    
+    {\color{green}\rule{0.6\linewidth}{1pt}}\\[1.5cm]
+    
+    % Dwa bloki obok siebie
+    \begin{minipage}{0.42\textwidth}
+        \centering
+        {\large\textbf{Jakub Bakaj}}\\[0.2em]
+        {\small Backend \& Baza Danych}\\[0.2em]
+        {\footnotesize\color{gray} nr albumu: 357477}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.42\textwidth}
+        \centering
+        {\large\textbf{Damian Nowak}}\\[0.2em]
+        {\small Frontend \& UX}\\[0.2em]
+        {\footnotesize\color{gray} nr albumu: 355270}
+    \end{minipage}
+    
+    \vfill
+    
+    {\large Projekt systemu -- aplikacje multimedialne}\\[0.3em]
+    {\small Wersja 1.0}
+    \vspace*{1cm}
+\end{titlepage}
+
+
+\newpage
+\hypersetup{pageanchor=true}
+
+\section{Tytuł projektu}
+
+\textbf{Inteligentna wyszukiwarka środków ochrony roślin (ŚOR)}
+
+\section{Problem}
+
+Prawidłowy dobór środków ochrony roślin (ŚOR) wiąże się ze złożonymi wyzwaniami technicznymi,
+prawnymi i ekonomicznymi, dotykającymi zarówno rolników i doradców agrotechnicznych,
+jak i ogrodników amatorów:
+\begin{itemize}
+    \item \textbf{Warunki polowe i presja czasu:} 
+    Wykonanie zabiegu w optymalnym oknie pogodowym wymaga natychmiastowej weryfikacji dawkowania,
+    ograniczeń temperaturowych oraz okresów karencji i prewencji -- najczęściej z poziomu smartfona
+    w kabinie ciągnika lub na działce.
+    \item \textbf{Pułapka marketingowa i brak wiedzy o substancjach czynnych:}
+    W sklepach ogrodniczych preparaty dla hobbystów sprzedawane są w miniaturowych buteleczkach
+    z ogromnym narzutem cenowym. Użytkownik nieprofesjonalny zazwyczaj nie wie, że może legalnie nabyć
+    ten sam preparat (o identycznej substancji czynnej i stężeniu) w większym opakowaniu rolniczym wielokrotnie taniej,
+    o ile dany środek nie wymaga formalnych uprawnień profesjonalnych. Brakuje wyszukiwarki sugerującej tańsze zamienniki
+    po składzie chemicznym.
+    \item \textbf{Bariery w dostępie do danych publicznych:}
+    Rejestry Ministerstwa Rolnictwa są nieprzystosowane do urządzeń mobilnych,
+    nie tolerują literówek w nazwach handlowych ani potocznych i wymuszają mozolne przeglądanie
+    skomplikowanych plików arkuszy kalkulacyjnych (XLSX).
+\end{itemize}
+
+\section{Obecny sposób rozwiązania problemu}
+
+Dotychczasowe metody weryfikacji preparatów i etykiet wiążą się z istotnymi ograniczeniami funkcjonalnymi lub kosztowymi:
+\begin{itemize}
+    \item \textbf{Narzędzia administracji publicznej:}
+    Oficjalna wyszukiwarka ministerstwa jest przestarzała, nie posiada wersji mobilnej i nie obsługuje
+    literówek. Przeglądanie surowych plików XLSX z rejestrem na telefonie w terenie jest wysoce uciążliwe.
+    \item \textbf{Aplikacje producentów chemii:}
+    Darmowe narzędzia poszczególnych koncernów ograniczają się do promowania wyłącznie własnego asortymentu,
+    uniemożliwiając niezależne porównanie substancji czynnych i tańszych zamienników.
+    \item \textbf{Dedykowane bazy mobilne (np. Vademecum):}
+    Istniejące na smartfony aplikacje branżowe, takie jak Vademecum ŚOR, wymagają płatnego abonamentu -- 
+    darmowa wersja demonstracyjna działa jedynie przez 14 dni, po czym odcina użytkownika od danych.
+    \item \textbf{Złożone systemy zarządzania (np. AgroBase):}
+    Kompleksowe platformy rolnicze wymagają opłacania drogich subskrypcji i są zbyt skomplikowane w obsłudze
+    dla indywidualnego rolnika lub ogrodnika potrzebującego szybkiej, doraźnej informacji.
+\end{itemize}
+
+\section{Użytkownicy systemu}
+
+\begin{itemize}
+    \item \textbf{Doradca agronomiczny / rolnik profesjonalny}
+    -- analizuje składy chemiczne (substancje aktywne), planuje rotację preparatów i~weryfikuje ich zgodność
+    z~aktualnym prawem oraz zasadami integrowanej ochrony roślin.
+
+    \item \textbf{Rolnik indywidualny / operator maszyn}
+    -- wykonuje zabiegi w~terenie; sprawdza na smartfonie dawkowanie, warunki stosowania oraz okresy karencji
+    i~prewencji bezpośrednio z~kabiny ciągnika.
+
+    \item \textbf{Ogrodnik amator / działkowiec}
+    -- szuka bezpiecznych środków do upraw przydomowych; korzysta z~filtrów preparatów dostępnych
+    bez uprawnień profesjonalnych oraz wyszukuje tańsze zamienniki po substancji czynnej.
+\end{itemize}
+
+\section{Cel projektu}
+
+Celem projektu jest opracowanie i implementacja responsywnej
+aplikacji internetowej pełniącej rolę inteligentnej wyszukiwarki
+środków ochrony roślin. System ma umożliwić łatwy, darmowy,
+niezależny i szybki dostęp do ujednoliconych danych o preparatach
+rolniczych z poziomu urządzeń mobilnych.
+
+\section{Proponowane rozwiązanie}
+
+Planowane jest stworzenie systemu w formie aplikacji webowej z interfejsem dostosowanym do urządzeń
+mobilnych zgodnie z podejściem \emph{Mobile First}.
+
+System będzie automatycznie pobierał i aktualizował dane z otwartych
+rejestrów rządowych oraz udostępnianych interfejsów API.
+
+Aplikacja udostępni wyszukiwarkę wykorzystującą mechanizm
+wyszukiwania rozmytego (\emph{fuzzy search}), umożliwiający
+uwzględnianie literówek oraz różnych wariantów nazw.
+
+Użytkownik będzie mógł korzystać z krzyżowego filtrowania, np.
+poprzez jednoczesny wybór uprawy i szkodnika, a także przeglądać
+szczegółowe karty produktów zawierające informacje dotyczące
+dawkowania oraz terminów stosowania.
+
+\section{Wstępny zakres projektu}
+
+Zakres projektu obejmuje:
+
+\begin{itemize}
+
+    \item
+    opracowanie architektury bazy danych dla środków ochrony
+    roślin, substancji aktywnych, upraw i agrofagów;
+
+    \item
+    napisanie mechanizmu automatycznego, cyklicznego pobierania
+    i parsowania danych z rejestrów administracji publicznej
+    z wykorzystaniem mechanizmu typu Cron Job;
+
+    \item
+    implementację silnika wyszukiwarki wspierającego filtrowanie
+    krzyżowe oraz algorytmy wyszukiwania rozmytego
+    (\emph{fuzzy search});
+
+    \item
+    stworzenie warstwy wizualnej (\emph{front-end}), charakteryzującej się wysokim kontrastem i umożliwiającej
+    wygodne korzystanie z aplikacji na smartfonach, również
+    w warunkach silnego nasłonecznienia.
+
+\end{itemize}
+
+\section{Wstępny podział prac}
+
+Prace nad projektem zostaną podzielone pomiędzy dwóch członków
+zespołu.
+
+\begin{itemize}
+
+    \item
+    \textbf{Jakub Bakaj -- backend i baza danych:}
+    projekt schematu relacyjnej bazy danych, wdrożenie procesu
+    automatycznej aktualizacji danych (Worker/Cron) ze
+    zewnętrznego API oraz przygotowanie punktów końcowych (API)
+    wyszukiwarki.
+
+    \item
+    \textbf{Damian Nowak -- frontend i UX:}
+    zaprojektowanie i wdrożenie responsywnego interfejsu
+    użytkownika, integracja formularzy wyszukiwania z API oraz
+    implementacja karty szczegółów produktu.
+
+\end{itemize}
+
+\end{document}

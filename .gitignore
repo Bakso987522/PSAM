@@ -1,0 +1,37 @@
+# Pliki pomocnicze i tymczasowe kompilacji LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex
+*.synctex.gz
+*.synctex(busy)
+*.pdfsync
+
+# Bibliografia i indeksy
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.idx
+*.ilg
+*.ind
+*.ist
+*.glo
+*.gls
+*.glg
+
+# Prezentacje (Beamer)
+*.nav
+*.snm
+*.vrb
+
+# Inne formaty wyjściowe / tymczasowe
+*.dvi
+*.xdv
+*.ps
+
