@@ -63,6 +63,13 @@
   {\thesection}{1em}{}
 
 % ============================================================
+% Grafika
+% ============================================================
+
+\usepackage{graphicx}
+\graphicspath{{img/}}
+
+% ============================================================
 % Hiperłącza
 % ============================================================
 
@@ -130,7 +137,7 @@
     \vfill
     
     {\large Projekt systemu -- aplikacje multimedialne}\\[0.3em]
-    {\small Wersja 1.0}
+    {\small Wersja 1.1}
     \vspace*{1cm}
 \end{titlepage}
 
@@ -143,6 +150,7 @@
 \textbf{Inteligentna wyszukiwarka środków ochrony roślin (ŚOR)}
 
 \section{Problem}
+\label{sec:problem}
 
 Prawidłowy dobór środków ochrony roślin (ŚOR) wiąże się ze złożonymi wyzwaniami technicznymi,
 prawnymi i ekonomicznymi, dotykającymi zarówno rolników i doradców agrotechnicznych,
@@ -156,31 +164,15 @@ jak i ogrodników amatorów:
     W sklepach ogrodniczych preparaty dla hobbystów sprzedawane są w miniaturowych buteleczkach
     z ogromnym narzutem cenowym. Użytkownik nieprofesjonalny zazwyczaj nie wie, że może legalnie nabyć
     ten sam preparat (o identycznej substancji czynnej i stężeniu) w większym opakowaniu rolniczym wielokrotnie taniej,
-    o ile dany środek nie wymaga formalnych uprawnień profesjonalnych. Brakuje wyszukiwarki sugerującej tańsze zamienniki
-    po składzie chemicznym.
+    o ile dany środek nie wymaga formalnych uprawnień profesjonalnych. W~analizowanych rozwiązaniach
+    (sekcja~\ref{sec:analiza}) nie znaleziono wyszukiwarki sugerującej tańsze zamienniki po składzie chemicznym.
     \item \textbf{Bariery w dostępie do danych publicznych:}
     Rejestry Ministerstwa Rolnictwa są nieprzystosowane do urządzeń mobilnych,
     nie tolerują literówek w nazwach handlowych ani potocznych i wymuszają mozolne przeglądanie
-    skomplikowanych plików arkuszy kalkulacyjnych (XLSX).
+    skomplikowanych plików arkuszy kalkulacyjnych (XLSX) lub korzystanie ze słabo zoptymalizowanej wyszukiwarki.
 \end{itemize}
 
-\section{Obecny sposób rozwiązania problemu}
-
-Dotychczasowe metody weryfikacji preparatów i etykiet wiążą się z istotnymi ograniczeniami funkcjonalnymi lub kosztowymi:
-\begin{itemize}
-    \item \textbf{Narzędzia administracji publicznej:}
-    Oficjalna wyszukiwarka ministerstwa jest przestarzała, nie posiada wersji mobilnej i nie obsługuje
-    literówek. Przeglądanie surowych plików XLSX z rejestrem na telefonie w terenie jest wysoce uciążliwe.
-    \item \textbf{Aplikacje producentów chemii:}
-    Darmowe narzędzia poszczególnych koncernów ograniczają się do promowania wyłącznie własnego asortymentu,
-    uniemożliwiając niezależne porównanie substancji czynnych i tańszych zamienników.
-    \item \textbf{Dedykowane bazy mobilne (np. Vademecum):}
-    Istniejące na smartfony aplikacje branżowe, takie jak Vademecum ŚOR, wymagają płatnego abonamentu -- 
-    darmowa wersja demonstracyjna działa jedynie przez 14 dni, po czym odcina użytkownika od danych.
-    \item \textbf{Złożone systemy zarządzania (np. AgroBase):}
-    Kompleksowe platformy rolnicze wymagają opłacania drogich subskrypcji i są zbyt skomplikowane w obsłudze
-    dla indywidualnego rolnika lub ogrodnika potrzebującego szybkiej, doraźnej informacji.
-\end{itemize}
+\input{sekcje/analiza_rozwiazan}
 
 \section{Użytkownicy systemu}
 
@@ -211,8 +203,11 @@ rolniczych z poziomu urządzeń mobilnych.
 Planowane jest stworzenie systemu w formie aplikacji webowej z interfejsem dostosowanym do urządzeń
 mobilnych zgodnie z podejściem \emph{Mobile First}.
 
-System będzie automatycznie pobierał i aktualizował dane z otwartych
-rejestrów rządowych oraz udostępnianych interfejsów API.
+System będzie automatycznie pobierał i aktualizował dane z rządowego
+portalu otwartych danych dane.gov.pl, na którym Ministerstwo Rolnictwa
+i~Rozwoju Wsi kwartalnie publikuje rejestr środków ochrony roślin oraz dane
+wyszukiwarki środków ochrony roślin w~formatach CSV i~XLSX. Pliki będą
+pobierane za pośrednictwem API portalu (api.dane.gov.pl).
 
 Aplikacja udostępni wyszukiwarkę wykorzystującą mechanizm
 wyszukiwania rozmytego (\emph{fuzzy search}), umożliwiający
@@ -236,6 +231,7 @@ Zakres projektu obejmuje:
     \item
     napisanie mechanizmu automatycznego, cyklicznego pobierania
     i parsowania danych z rejestrów administracji publicznej
+    (pliki CSV/XLSX z~portalu dane.gov.pl)
     z wykorzystaniem mechanizmu typu Cron Job;
 
     \item
@@ -260,9 +256,9 @@ zespołu.
     \item
     \textbf{Jakub Bakaj -- backend i baza danych:}
     projekt schematu relacyjnej bazy danych, wdrożenie procesu
-    automatycznej aktualizacji danych (Worker/Cron) ze
-    zewnętrznego API oraz przygotowanie punktów końcowych (API)
-    wyszukiwarki.
+    automatycznej aktualizacji danych (Worker/Cron) z~plików CSV/XLSX
+    pobieranych przez API portalu dane.gov.pl oraz przygotowanie punktów
+    końcowych (API) wyszukiwarki.
 
     \item
     \textbf{Damian Nowak -- frontend i UX:}
