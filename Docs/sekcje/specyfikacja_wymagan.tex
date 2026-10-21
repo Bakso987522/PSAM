@@ -1,0 +1,316 @@
+\newpage
+\section{Specyfikacja wymagań}
+\label{sec:specyfikacja}
+
+Specyfikacja opisuje, czego oczekujemy od systemu, bez przesądzania o~sposobie
+jego realizacji. Wymagania funkcjonalne oznaczono identyfikatorami WF-xx,
+a~niefunkcjonalne -- WNF-xx. Każde wymaganie ma przypisany priorytet:
+
+\begin{itemize}
+    \item \textbf{MUST} -- wymaganie konieczne; bez niego system nie realizuje
+    swojego podstawowego celu,
+    \item \textbf{SHOULD} -- wymaganie ważne, które powinno zostać zrealizowane,
+    ale system może bez niego funkcjonować,
+    \item \textbf{COULD} -- wymaganie dodatkowe, realizowane w~miarę dostępnego
+    czasu.
+\end{itemize}
+
+\subsection{Zakres systemu}
+
+System obejmuje:
+
+\begin{itemize}
+    \item wyszukiwanie środków ochrony roślin po nazwie handlowej, substancji
+    czynnej, uprawie i~agrofagu, wraz z~filtrowaniem krzyżowym,
+    \item kartę środka z~informacjami o~zastosowaniach, dawkach, terminach
+    prawnych i~etykiecie,
+    \item wyszukiwanie środków o~tych samych substancjach czynnych
+    (zamienników),
+    \item automatyczną aktualizację danych na podstawie publicznych danych
+    Ministerstwa Rolnictwa i~Rozwoju Wsi.
+\end{itemize}
+
+Poza zakresem systemu są: ceny i~sprzedaż środków, konta użytkowników i~panel
+administracyjny, ewidencja wykonanych zabiegów, rozpoznawanie agrofagów na
+podstawie zdjęć, aplikacja instalowana na urządzeniu oraz praca bez dostępu do
+internetu.
+
+\subsection{Interesariusze}
+
+\begingroup
+\small
+\begin{longtable}{|>{\raggedright\arraybackslash}p{3.2cm}|p{8.8cm}|>{\raggedright\arraybackslash}p{2.4cm}|}
+\hline
+\textbf{Interesariusz} & \textbf{Opis i~potrzeba} & \textbf{Wymagania} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Interesariusz} & \textbf{Opis i~potrzeba} & \textbf{Wymagania} \\
+\hline
+\endhead
+Doradca agronomiczny / rolnik profesjonalny &
+Analizuje składy chemiczne środków, planuje rotację preparatów i~weryfikuje
+ich zgodność z~aktualnym prawem oraz zasadami integrowanej ochrony roślin.
+,,Chcę wiedzieć, czym mogę zastąpić środek i~czy jest on dopuszczony na moją
+uprawę.'' &
+WF-03, WF-04, WF-10, WF-16 \\
+\hline
+Rolnik indywidualny / operator maszyn &
+Wykonuje zabiegi w~terenie i~sprawdza na smartfonie dawkowanie, warunki
+stosowania oraz okresy karencji i~prewencji bezpośrednio z~kabiny ciągnika.
+,,Chcę w~kabinie ciągnika sprawdzić dawkę i~karencję, nawet przy słabym
+zasięgu.'' &
+WF-06, WF-07, WNF-01 do WNF-05 \\
+\hline
+Ogrodnik amator / działkowiec &
+Szuka bezpiecznych środków do upraw przydomowych, dostępnych bez uprawnień
+profesjonalnych. ,,Chcę wiedzieć, których środków mogę legalnie używać
+i~czy istnieją tańsze odpowiedniki drogiej, małej butelki ze sklepu
+ogrodniczego.'' &
+WF-05, WF-10 \\
+\hline
+Ministerstwo Rolnictwa i~Rozwoju Wsi &
+Dostawca danych -- publikuje rejestr środków ochrony roślin na portalu
+dane.gov.pl. Jego dane muszą być prezentowane bez zniekształceń, a~rytm ich
+publikacji wyznacza rytm aktualizacji systemu. &
+WF-13, WNF-07, O-01 \\
+\hline
+Zespół projektowy &
+Twórcy i~opiekunowie systemu. ,,Chcemy, żeby dane aktualizowały się bez
+naszej ręcznej pracy.'' &
+WF-13, WNF-08, O-04 \\
+\hline
+Producenci i~dystrybutorzy środków (interesariusz pośredni) &
+Ich produkty są prezentowane w~systemie, dlatego oczekują rzetelnej
+i~neutralnej prezentacji. &
+WNF-09 \\
+\hline
+\end{longtable}
+\endgroup
+
+\subsection{Role użytkowników}
+
+System nie wymaga zakładania kont. Użytkownik wybiera swoją rolę przełącznikiem
+w~aplikacji, a~wybór jest zapamiętywany na jego urządzeniu. System nie
+weryfikuje roli -- ma ona charakter informacyjny i~decyduje o~tym, jakie środki
+są prezentowane.
+
+\begin{itemize}
+    \item \textbf{Użytkownik profesjonalny} (doradca agronomiczny, rolnik,
+    operator maszyn) -- ma dostęp do wszystkich środków zarejestrowanych
+    w~Polsce.
+    \item \textbf{Użytkownik nieprofesjonalny} (ogrodnik amator, działkowiec)
+    -- widzi wyłącznie środki dopuszczone do stosowania przez użytkowników
+    nieprofesjonalnych, również na liście zamienników.
+\end{itemize}
+
+\subsection{Wymagania funkcjonalne}
+
+\begingroup
+\small
+\begin{longtable}{|p{1.4cm}|p{11.4cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Wymaganie} & \textbf{Priorytet} \\
+\hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Wymaganie} & \textbf{Priorytet} \\
+\hline
+\endhead
+WF-01 & Użytkownik może wyszukać środek po nazwie handlowej. Wyniki są
+wyświetlane po wpisaniu co najmniej 3 znaków. & MUST \\
+\hline
+WF-02 & System odnajduje środek, uprawę, agrofaga lub substancję czynną,
+gdy wpisana nazwa różni się od nazwy w~rejestrze najwyżej o~2 znaki
+(brakujący, nadmiarowy, błędny lub zamieniony znak), niezależnie od
+wielkości liter i~polskich znaków. & MUST \\
+\hline
+WF-03 & Użytkownik może wyszukać środki zawierające wybraną substancję
+czynną. & MUST \\
+\hline
+WF-04 & Użytkownik może jednocześnie wybrać uprawę, agrofaga i~rodzaj środka.
+Wyniki zawierają wyłącznie środki, które mają zastosowanie spełniające
+wszystkie wybrane kryteria, a~każdy środek występuje na liście jeden raz.
+& MUST \\
+\hline
+WF-05 & Użytkownik może wybrać rolę profesjonalną lub nieprofesjonalną.
+W~roli nieprofesjonalnej wyniki wyszukiwania i~lista zamienników obejmują
+wyłącznie środki dopuszczone do stosowania przez użytkowników
+nieprofesjonalnych. & MUST \\
+\hline
+WF-06 & Karta środka zawiera: nazwę, producenta, numer zezwolenia, rodzaj
+środka, substancje czynne wraz z~zawartością, termin ważności zezwolenia,
+terminy dopuszczenia do sprzedaży i~stosowania, dostępne opakowania oraz
+listę wszystkich zastosowań (uprawa, agrofag, dawka, termin i~metoda
+stosowania). & MUST \\
+\hline
+WF-07 & Karta środka wyświetla okres karencji, jeżeli jest on podany
+w~danych źródłowych. W~przeciwnym razie informuje, że okres karencji należy
+sprawdzić na etykiecie, i~udostępnia odnośnik do niej. & MUST \\
+\hline
+WF-08 & System odczytuje okres karencji z~etykiet środków i~wyświetla go na
+karcie środka dla każdej uprawy. & COULD \\
+\hline
+WF-09 & Użytkownik może wyświetlić etykietę środka bez opuszczania aplikacji
+oraz pobrać ją na swoje urządzenie. & SHOULD \\
+\hline
+WF-10 & Dla wybranego środka system wyświetla inne środki zawierające te
+same substancje czynne (zamienniki), podając przy każdym z~nich zawartość
+substancji czynnej, dostępne opakowania oraz rodzaj użytkownika
+(profesjonalny lub nieprofesjonalny). Środki o~tej samej zawartości
+substancji czynnej są wyświetlane na początku listy, a~po wybraniu uprawy
+lista obejmuje wyłącznie środki zarejestrowane dla tej uprawy. & MUST \\
+\hline
+WF-11 & System oznacza środki, których termin dopuszczenia do stosowania
+upływa w~ciągu 90 dni lub już upłynął. & SHOULD \\
+\hline
+WF-12 & Wyszukanie środka usuniętego z~rejestru zwraca informację o~jego
+usunięciu wraz z~datą, zamiast pustej listy wyników. & SHOULD \\
+\hline
+WF-13 & System automatycznie pobiera i~wczytuje nowe wersje danych
+o~środkach ochrony roślin publikowane przez Ministerstwo Rolnictwa i~Rozwoju
+Wsi na portalu dane.gov.pl. & MUST \\
+\hline
+WF-14 & System wyświetla datę publikacji wersji danych, z~której korzysta.
+& SHOULD \\
+\hline
+WF-15 & System zapamiętuje na urządzeniu użytkownika 10 ostatnio
+przeglądanych środków, bez zakładania konta. & COULD \\
+\hline
+WF-16 & Każda karta środka ma stały adres, który użytkownik może przesłać
+innej osobie. & COULD \\
+\hline
+\end{longtable}
+\endgroup
+
+\subsection{Wymagania niefunkcjonalne}
+
+\begingroup
+\small
+\begin{longtable}{|p{1.4cm}|p{11.4cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Wymaganie} & \textbf{Priorytet} \\
+\hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Wymaganie} & \textbf{Priorytet} \\
+\hline
+\endhead
+WNF-01 & Wyniki wyszukiwania są wyświetlane w~czasie nie dłuższym niż
+2~sekundy od zakończenia wpisywania zapytania, przy połączeniu
+o~przepustowości 1~Mb/s. & MUST \\
+\hline
+WNF-02 & Pierwsze otwarcie aplikacji wymaga pobrania nie więcej niż 1~MB
+danych (dla porównania: wyszukiwarka ministerstwa -- ok.~10~MB). & MUST \\
+\hline
+WNF-03 & Żaden widok aplikacji nie wymaga przewijania w~poziomie na ekranach
+o~szerokości od 360 pikseli. & MUST \\
+\hline
+WNF-04 & Elementy dotykowe (przyciski, pola, pozycje list) mają wymiary co
+najmniej $48 \times 48$ pikseli, a~odstęp między nimi wynosi co najmniej
+8 pikseli. & SHOULD \\
+\hline
+WNF-05 & Kontrast tekstu względem tła wynosi co najmniej 7:1 (poziom AAA
+według wytycznych WCAG~2.1). & SHOULD \\
+\hline
+WNF-06 & Aplikacja działa poprawnie w~dwóch najnowszych wersjach przeglądarek
+Chrome, Firefox, Safari i~Edge, na systemach Android, iOS i~Windows. & MUST \\
+\hline
+WNF-07 & Nowa wersja danych jest dostępna w~systemie najpóźniej 7~dni po jej
+publikacji na portalu dane.gov.pl. & MUST \\
+\hline
+WNF-08 & Nieudane wczytanie nowej wersji danych nie przerywa działania
+systemu: użytkownicy nadal korzystają z~poprzedniej wersji danych, a~informacja
+o~błędzie jest zapisywana w~dzienniku zdarzeń systemu. & MUST \\
+\hline
+WNF-09 & Wszystkie funkcje systemu są dostępne bez zakładania konta
+i~logowania, bez opłat oraz bez wyświetlania reklam. & MUST \\
+\hline
+WNF-10 & Interfejs używa terminologii zgodnej z~rejestrem ministerstwa
+i~etykietami środków (np. ,,substancja czynna'', ,,dawka'', ,,okres
+karencji''). & SHOULD \\
+\hline
+\end{longtable}
+\endgroup
+
+\subsection{Ograniczenia}
+
+\begin{itemize}
+    \item \textbf{O-01:} Jedynym źródłem danych są pliki publikowane przez
+    Ministerstwo Rolnictwa i~Rozwoju Wsi na portalu dane.gov.pl. System nie
+    zawiera informacji spoza tych plików, np. cen środków, a~okres karencji
+    jest w~nich podany tylko w~części opisów zastosowań.
+    \item \textbf{O-02:} System ma charakter wyłącznie informacyjny -- każda
+    karta środka zawiera informację, że prawnie wiążąca jest
+    etykieta-instrukcja stosowania środka.
+    \item \textbf{O-03:} System jest aplikacją internetową uruchamianą
+    w~przeglądarce; nie przewiduje się aplikacji instalowanej na urządzeniu.
+    \item \textbf{O-04:} System nie ma panelu administracyjnego, a~aktualizacja
+    danych odbywa się w~pełni automatycznie.
+    \item \textbf{O-05:} Projekt realizuje zespół dwuosobowy w~ciągu jednego
+    semestru, dlatego wymagania o~priorytecie COULD są realizowane w~miarę
+    dostępnego czasu.
+\end{itemize}
+
+\subsection{Kryteria akceptacji}
+
+\subsubsection{WF-02 -- wyszukiwanie odporne na literówki}
+
+\begin{enumerate}
+    \item Wpisanie ,,Amistr'', ,,Amitsar'' lub ,,Amistarr'' zwraca środek
+    Amistar 250 SC wśród pierwszych 5 wyników.
+    \item Zapytania ,,AMISTAR'', ,,amistar'' i~,,Amistar'' zwracają te same
+    wyniki.
+    \item Wpisanie ,,pszenzyto'' w~polu uprawy odnajduje uprawę ,,pszenżyto''.
+    \item Gdy żaden środek nie pasuje do zapytania, system wyświetla komunikat
+    o~braku wyników.
+\end{enumerate}
+
+\subsubsection{WF-04 -- filtrowanie krzyżowe}
+
+\begin{enumerate}
+    \item Wybranie uprawy ,,ziemniak'' i~agrofaga ,,stonka ziemniaczana''
+    zwraca wyłącznie środki, które w~rejestrze mają zastosowanie dla tej
+    pary.
+    \item Każdy środek pojawia się na liście wyników jeden raz, niezależnie od
+    liczby jego zastosowań.
+    \item Dodanie filtra rodzaju środka ,,Insektycyd'' zawęża listę -- każdy
+    wyświetlony środek ma rodzaj obejmujący ,,Insektycyd''.
+    \item Jeżeli żaden środek nie spełnia wszystkich kryteriów, system
+    wyświetla komunikat o~braku wyników i~umożliwia usunięcie pojedynczego
+    filtra jednym dotknięciem.
+\end{enumerate}
+
+\subsubsection{WF-10 -- zamienniki}
+
+\begin{enumerate}
+    \item Dla środka Amistar 250 SC (azoksystrobina -- 250~g) lista zawiera
+    wyłącznie środki, których jedyną substancją czynną jest azoksystrobina,
+    a~środki o~zawartości 250~g znajdują się na jej początku.
+    \item Przy każdym środku na liście wyświetlana jest zawartość substancji
+    czynnej, dostępne opakowania oraz rodzaj użytkownika.
+    \item W~roli nieprofesjonalnej lista zawiera wyłącznie środki dopuszczone
+    dla użytkowników nieprofesjonalnych; jeżeli takich środków nie ma, system
+    wyświetla komunikat o~braku zamienników dla użytkowników
+    nieprofesjonalnych.
+    \item Po wybraniu uprawy lista zawiera wyłącznie środki zarejestrowane dla
+    tej uprawy.
+    \item Środek, dla którego wyszukiwane są zamienniki, nie pojawia się na
+    liście, a~środki, których termin dopuszczenia do stosowania upłynął, nie są
+    proponowane.
+\end{enumerate}
+
+\subsection{Konflikty wymagań}
+
+\begin{itemize}
+    \item \textbf{K-01: tańsze odpowiedniki a~przepisy.} Problem opisany
+    w~sekcji~\ref{sec:problem} zakłada, że użytkownik nieprofesjonalny
+    znajdzie tańszy odpowiednik środka w~większym opakowaniu.
+    Według danych ministerstwa tylko około 7\,\% środków w~rejestrze jest
+    dopuszczonych do stosowania przez użytkowników nieprofesjonalnych --
+    pozostałe wymagają uprawnień, niezależnie od wielkości opakowania. Rozstrzygnięcie: przy każdym
+    zamienniku wyświetlany jest rodzaj użytkownika (WF-10), a~w~roli
+    nieprofesjonalnej prezentowane są tylko środki dopuszczone dla amatorów
+    (WF-05), dzięki czemu użytkownik widzi wyłącznie te odpowiedniki, które
+    może legalnie kupić i~stosować.
+\end{itemize}

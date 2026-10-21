@@ -70,6 +70,13 @@
 \graphicspath{{img/}}
 
 % ============================================================
+% Tabele
+% ============================================================
+
+\usepackage{array}
+\usepackage{longtable}
+
+% ============================================================
 % Hiperłącza
 % ============================================================
 
@@ -137,7 +144,7 @@
     \vfill
     
     {\large Projekt systemu -- aplikacje multimedialne}\\[0.3em]
-    {\small Wersja 1.2}
+    {\small Wersja 1.3}
     \vspace*{1cm}
 \end{titlepage}
 
@@ -174,22 +181,6 @@ jak i ogrodników amatorów:
 
 \input{sekcje/analiza_rozwiazan}
 
-\section{Użytkownicy systemu}
-
-\begin{itemize}
-    \item \textbf{Doradca agronomiczny / rolnik profesjonalny}
-    -- analizuje składy chemiczne (substancje aktywne), planuje rotację preparatów i~weryfikuje ich zgodność
-    z~aktualnym prawem oraz zasadami integrowanej ochrony roślin.
-
-    \item \textbf{Rolnik indywidualny / operator maszyn}
-    -- wykonuje zabiegi w~terenie; sprawdza na smartfonie dawkowanie, warunki stosowania oraz okresy karencji
-    i~prewencji bezpośrednio z~kabiny ciągnika.
-
-    \item \textbf{Ogrodnik amator / działkowiec}
-    -- szuka bezpiecznych środków do upraw przydomowych; korzysta z~filtrów preparatów dostępnych
-    bez uprawnień profesjonalnych oraz wyszukuje tańsze zamienniki po substancji czynnej.
-\end{itemize}
-
 \section{Cel projektu}
 
 Celem projektu jest opracowanie i implementacja responsywnej
@@ -218,33 +209,7 @@ poprzez jednoczesny wybór uprawy i szkodnika, a także przeglądać
 szczegółowe karty produktów zawierające informacje dotyczące
 dawkowania oraz terminów stosowania.
 
-\section{Wstępny zakres projektu}
-
-Zakres projektu obejmuje:
-
-\begin{itemize}
-
-    \item
-    opracowanie architektury bazy danych dla środków ochrony
-    roślin, substancji aktywnych, upraw i agrofagów;
-
-    \item
-    napisanie mechanizmu automatycznego, cyklicznego pobierania
-    i parsowania danych z rejestrów administracji publicznej
-    (pliki CSV/XLSX z~portalu dane.gov.pl)
-    z wykorzystaniem mechanizmu typu Cron Job;
-
-    \item
-    implementację silnika wyszukiwarki wspierającego filtrowanie
-    krzyżowe oraz algorytmy wyszukiwania rozmytego
-    (\emph{fuzzy search});
-
-    \item
-    stworzenie warstwy wizualnej (\emph{front-end}), charakteryzującej się wysokim kontrastem i umożliwiającej
-    wygodne korzystanie z aplikacji na smartfonach, również
-    w warunkach silnego nasłonecznienia.
-
-\end{itemize}
+\input{sekcje/specyfikacja_wymagan}
 
 \section{Wstępny podział prac}
 
