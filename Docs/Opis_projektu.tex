@@ -126,15 +126,22 @@
     
     {\color{green}\rule{0.6\linewidth}{1pt}}\\[1.5cm]
     
-    % Dwa bloki obok siebie
-    \begin{minipage}{0.42\textwidth}
+    % Trzy bloki obok siebie
+    \begin{minipage}{0.31\textwidth}
         \centering
         {\large\textbf{Jakub Bakaj}}\\[0.2em]
-        {\small Backend \& Baza Danych}\\[0.2em]
+        {\small Baza Danych}\\[0.2em]
         {\footnotesize\color{gray} nr albumu: 357477}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.42\textwidth}
+    \begin{minipage}{0.31\textwidth}
+        \centering
+        {\large\textbf{Natalia Duda}}\\[0.2em]
+        {\small Backend}\\[0.2em]
+        {\footnotesize\color{gray} nr albumu: 357126}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.31\textwidth}
         \centering
         {\large\textbf{Damian Nowak}}\\[0.2em]
         {\small Frontend \& UX}\\[0.2em]
@@ -144,7 +151,7 @@
     \vfill
     
     {\large Projekt systemu -- aplikacje multimedialne}\\[0.3em]
-    {\small Wersja 1.3}
+    {\small Wersja 1.4}
     \vspace*{1cm}
 \end{titlepage}
 
@@ -211,19 +218,26 @@ dawkowania oraz terminów stosowania.
 
 \input{sekcje/specyfikacja_wymagan}
 
+\input{sekcje/projekt_systemu}
+
+\newpage
 \section{Wstępny podział prac}
 
-Prace nad projektem zostaną podzielone pomiędzy dwóch członków
+Prace nad projektem zostaną podzielone pomiędzy trzech członków
 zespołu.
 
 \begin{itemize}
 
     \item
-    \textbf{Jakub Bakaj -- backend i baza danych:}
-    projekt schematu relacyjnej bazy danych, wdrożenie procesu
+    \textbf{Jakub Bakaj -- baza danych i~przetwarzanie danych:}
+    projekt schematu relacyjnej bazy danych oraz wdrożenie procesu
     automatycznej aktualizacji danych (Worker/Cron) z~plików CSV/XLSX
-    pobieranych przez API portalu dane.gov.pl oraz przygotowanie punktów
-    końcowych (API) wyszukiwarki.
+    pobieranych przez API portalu dane.gov.pl.
+
+    \item
+    \textbf{Natalia Duda -- backend:}
+    przygotowanie punktów końcowych (API) wyszukiwarki oraz ich integracja
+    z~interfejsem użytkownika.
 
     \item
     \textbf{Damian Nowak -- frontend i UX:}
