@@ -1,0 +1,36 @@
+version: 3
+
+tasks:
+    default:
+        cmd: task --list
+        desc: "Lists all tasks for that project"
+
+    up:
+        desc: "Starts the whole stack in dev mode"
+        cmd: docker compose up -d
+
+    down:
+        desc: "Stops the stack"
+        cmd: docker compose down
+
+    logs:
+        desc: "Follows logs (optionally: task logs -- api)"
+        cmd: docker compose logs -f {{.CLI_ARGS}}
+
+    rebuild:
+        desc: "Rebuilds images after dependency changes (optionally: task rebuild -- api)"
+        cmd: docker compose up -d --build -V {{.CLI_ARGS}}
+
+    import:
+        desc: "Runs the data import once"
+        cmd: docker compose run --rm importer python -m importer run
+
+    db:psql:
+        desc: "Opens psql in the database container"
+        cmd: docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+
+    db:reset:
+        desc: "Drops the database volume and recreates it from db/init"
+        cmds:
+            - docker compose down -v
+            - docker compose up -d
