@@ -4,15 +4,17 @@ import os
 import psycopg
 import httpx
 
-from importer import source
+from importer import source, parsers
 
 def run() -> None:
     dataset_id = os.environ.get("DANE_GOV_DATASET_ID")
     with httpx.Client(timeout=60) as client:
         published, urls = source.latest_version(client, dataset_id)
-    print(f"import: latest version {published}")
-    for key, url in urls.items():
-        print(f"  {key}: {url}")
+        print(f"import: latest version {published}")
+        files = source.download_all(client, urls)
+    basic = parsers.read_xlsx("basic", files["basic"])
+    cards = parsers.read_csv("cards", files["cards"])
+    print(f"import: read {len(basic)} products, {len(cards)} cards")
 
     with psycopg.connect(os.environ["DATABASE_URL"]) as conn:
         conn.execute(

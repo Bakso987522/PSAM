@@ -28,3 +28,12 @@ def latest_version(client: httpx.Client, dataset_id: str) -> tuple[date, dict[st
     if missing:
         raise RuntimeError(f"version {published} is missing files: {sorted(missing)}")
     return date.fromisoformat(published), urls
+
+
+def download_all(client: httpx.Client, urls: dict[str, str]) -> dict[str, bytes]:
+    files = {}
+    for key, url in urls.items():
+        resp = client.get(url, follow_redirects=True)
+        resp.raise_for_status()
+        files[key] = resp.content
+    return files
