@@ -2,21 +2,28 @@ import argparse
 import os
 
 import psycopg
+import httpx
 
+from importer import source
 
 def run() -> None:
+    dataset_id = os.environ.get("DANE_GOV_DATASET_ID")
+    with httpx.Client(timeout=60) as client:
+        published, urls = source.latest_version(client, dataset_id)
+    print(f"import: latest version {published}")
+    for key, url in urls.items():
+        print(f"  {key}: {url}")
+
     with psycopg.connect(os.environ["DATABASE_URL"]) as conn:
         conn.execute(
-            "INSERT INTO import_history (status, message) VALUES (%s, %s)",
-            ("skipped", "import not implemented yet"),
+            "INSERT INTO import_history (published_at, status, message) VALUES (%s, %s, %s)",
+            (published, "skipped", "import not implemented yet"),
         )
-    print("import: not implemented yet")
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="importer")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("run", help="pobierz i wczytaj najnowsze dane rejestru")
+    sub.add_parser("run", help="download and load newest data from register")
     args = parser.parse_args()
 
     if args.command == "run":
