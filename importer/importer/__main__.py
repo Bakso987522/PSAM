@@ -4,7 +4,7 @@ import os
 import psycopg
 import httpx
 
-from importer import source, parsers
+from importer import source, loader
 
 def run() -> None:
     dataset_id = os.environ.get("DANE_GOV_DATASET_ID")
@@ -12,15 +12,22 @@ def run() -> None:
         published, urls = source.latest_version(client, dataset_id)
         print(f"import: latest version {published}")
         files = source.download_all(client, urls)
-    basic = parsers.read_xlsx("basic", files["basic"])
-    cards = parsers.read_csv("cards", files["cards"])
-    print(f"import: read {len(basic)} products, {len(cards)} cards")
 
-    with psycopg.connect(os.environ["DATABASE_URL"]) as conn:
+    with psycopg.connect(os.environ["DATABASE_URL"], autocommit=True) as conn:
+        try:
+            stats = loader.load(conn, files)
+        except Exception as e:
+            conn.execute(
+                "INSERT INTO import_history (published_at, status, message) VALUES (%s, %s, %s)",
+                (published, "failed", f"{type(e).__name__}: {e}"),
+            )
+            raise
         conn.execute(
             "INSERT INTO import_history (published_at, status, message) VALUES (%s, %s, %s)",
-            (published, "skipped", "import not implemented yet"),
+            (published, "success", str(stats)),
         )
+    print(f"import: version {published} loaded: {stats}")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="importer")

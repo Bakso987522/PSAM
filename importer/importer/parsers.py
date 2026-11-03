@@ -8,6 +8,7 @@ REQUIRED_COLUMNS = {
               "TerminDopuszczenia", "etykieta", "Op", "BazowySor"},
     "cards": {"id_sor", "Zastosowanie"},
 }
+AMATEUR_USE = {"amatorskie", "amatorskie / profesjonalne"}
 
 
 def _clean(v):
