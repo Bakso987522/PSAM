@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 
 REQUIRED_COLUMNS = {
     "basic": {"id_sor", "nazwa", "producent_prosty", "NrZezw", "TerminZezw", "TerminDopSprzedazy",
-              "TerminDopuszczenia", "etykieta", "Op", "BazowySor"},
+              "TerminDopuszczenia", "etykieta", "Op", "BazowySor", "Rodzaj"},
     "cards": {"id_sor", "Zastosowanie"},
 }
 AMATEUR_USE = {"amatorskie", "amatorskie / profesjonalne"}
