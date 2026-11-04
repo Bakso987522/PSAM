@@ -1,1 +1,67 @@
+@import "@fontsource-variable/outfit";
 @import "tailwindcss";
+
+@layer base {
+    :root {
+        --font-size-root: 1.2rem;
+    }
+
+    html {
+        min-height: 100%;
+    }
+
+    body {
+        background: #fff url("/assets/background.webp") no-repeat bottom center;
+        background-size: 100% auto;
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+    }
+    @media only screen and (max-width: 1024px) {
+        body {
+            background-size: auto 40%;
+        }
+    }
+}
+
+@theme {
+    --font-sans: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+
+    --text-xs: calc(var(--font-size-root) * 0.75);
+    --text-sm: calc(var(--font-size-root) * 0.875);
+    --text-base: var(--font-size-root);
+    --text-lg: calc(var(--font-size-root) * 1.125);
+    --text-xl: calc(var(--font-size-root) * 1.25);
+    --text-2xl: calc(var(--font-size-root) * 1.5);
+    --text-3xl: calc(var(--font-size-root) * 1.875);
+    --text-4xl: calc(var(--font-size-root) * 2.25);
+    --text-5xl: calc(var(--font-size-root) * 3);
+    --text-6xl: calc(var(--font-size-root) * 3.75);
+    --text-7xl: calc(var(--font-size-root) * 4.5);
+    --text-8xl: calc(var(--font-size-root) * 6);
+    --text-9xl: calc(var(--font-size-root) * 8);
+
+    --color-primary: #397437;
+    --color-primary-dark: #265c2b;
+    --color-primary-darker: #1e491f;
+    --color-primary-soft: #e3eee0;
+    --color-primary-tint: #e8f1e6;
+    --color-primary-tint-2: #ddedda;
+
+    --color-field: #cbcbcb;
+    --color-line: #d7d7d7;
+    --color-muted: #898989;
+    --color-secondary: #646464;
+
+    --color-warn-bg: #ffe9bf;
+    --color-warn-fg: #6b3a00;
+    --color-danger-bg: #fbd9d5;
+    --color-danger-fg: #8a1c12;
+    --color-neutral-bg: #dde5da;
+
+    --radius-badge: 6px;
+    --radius-control: 8px;
+    --radius-field: 10px;
+    --radius-card: 12px;
+
+    --shadow-card: 0 0 4px rgb(0 0 0 / 0.25);
+}
