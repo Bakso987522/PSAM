@@ -1,0 +1,35 @@
+info:
+  name: Search
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{url}}/search?q=Amistar&crops=pszenica&crops=rzepak&pests=mszyce&productTypes=Fungicyd&role=professional"
+  params:
+    - name: q
+      value: Amistar
+      type: query
+    - name: crops
+      value: pszenica
+      type: query
+    - name: crops
+      value: rzepak
+      type: query
+    - name: pests
+      value: mszyce
+      type: query
+    - name: productTypes
+      value: Fungicyd
+      type: query
+    - name: role
+      value: professional
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
