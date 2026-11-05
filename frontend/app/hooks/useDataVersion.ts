@@ -7,7 +7,8 @@ export function useDataVersion() {
     const { data, status } = useFetch<DataVersion>(API_ENDPOINTS.dataVersion, {
         key: "data-version",
         lazy: true,
-        immediate: API_ENDPOINTS.dataVersion !== "",
+        immediate: Boolean(API_ENDPOINTS.dataVersion),
+        // immediate: API_ENDPOINTS.dataVersion !== "",
     });
 
     const publishedAt = computed(() => {

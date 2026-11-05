@@ -16,3 +16,5 @@ export const ROLE_OPTIONS: RoleOption[] = [
     { value: "professional", label: "Profesjonalna" },
     { value: "amateur", label: "Nieprofesjonalna" },
 ];
+
+export const PERMIT_EXPIRY_WARNING_DAYS = 90;
