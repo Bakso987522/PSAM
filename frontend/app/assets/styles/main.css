@@ -11,13 +11,22 @@
     }
 
     body {
-        background: #fff url("/assets/background.webp") no-repeat bottom center;
-        background-size: 100% auto;
+        background-color: #fff;
         font-size: var(--text-base);
         line-height: var(--text-base--line-height);
     }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: url("/assets/background.webp") no-repeat bottom center;
+        background-size: 100% auto;
+    }
     @media only screen and (max-width: 1024px) {
-        body {
+        body::before {
             background-size: auto 40%;
         }
     }
