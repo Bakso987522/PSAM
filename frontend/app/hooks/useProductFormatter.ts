@@ -11,12 +11,17 @@ export function useProductFormatter() {
         return value.charAt(0).toLocaleUpperCase("pl-PL") + value.slice(1);
     };
 
-    const formatSubstance = (substance: ProductSubstance) => {
+    const formatContent = (substance: ProductSubstance) => {
         if (substance.content === null) {
-            return substance.name;
+            return "";
         }
         const unit = substance.unit ? ` ${substance.unit}` : "";
-        return `${substance.name} (${contentFormatter.format(substance.content)}${unit})`;
+        return `${contentFormatter.format(substance.content)}${unit}`;
+    };
+
+    const formatSubstance = (substance: ProductSubstance) => {
+        const content = formatContent(substance);
+        return content ? `${substance.name} (${content})` : substance.name;
     };
 
     const formatSubstances = (substances: ProductSubstance[]) => {
@@ -33,7 +38,9 @@ export function useProductFormatter() {
             : ProductUserLabel.Professional;
     };
 
-    const getProductHint = (product: SearchResult) => {
+    const getProductHint = (
+        product: Pick<SearchResult, "substances" | "productTypes">,
+    ) => {
         const substances = product.substances
             .map((substance) => substance.name)
             .join(", ");
@@ -42,6 +49,8 @@ export function useProductFormatter() {
 
     return {
         capitalize,
+        formatContent,
+        formatSubstance,
         formatSubstances,
         formatProductTypes,
         getUserLabel,

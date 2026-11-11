@@ -14,10 +14,15 @@ import { PageTitle } from "~/enums/PageTitle";
 import { ProfessionalOnlyMessage } from "~/enums/ProfessionalOnlyMessage";
 import { ResultsText } from "~/enums/ResultsText";
 import { UserRole } from "~/enums/UserRole";
+import { useLastResultsPath } from "~/hooks/useLastResultsPath";
 import { useSearchResults } from "~/hooks/useSearchResults";
 import type { BreadcrumbItem } from "~/types/ui/BreadcrumbItem";
 
 const router = useRouter();
+const route = useRoute();
+const { rememberResultsPath } = useLastResultsPath();
+
+watch(() => route.fullPath, rememberResultsPath, { immediate: true });
 const {
     criteria,
     response,

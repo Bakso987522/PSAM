@@ -11,5 +11,6 @@ export enum SearchText {
     SuggestionsLoading = "Szukam…",
     SuggestionsEmpty = "Brak podpowiedzi",
     RecentProducts = "Ostatnio przeglądane",
+    ClearRecentProducts = "Wyczyść historię",
     DataVersion = "Dane z rejestru z dnia",
 }
