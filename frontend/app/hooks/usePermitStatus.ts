@@ -1,5 +1,6 @@
 import { PERMIT_EXPIRY_WARNING_DAYS } from "~/constants/search";
-import type { PermitStatus } from "~/types/PermitStatus";
+import { PermitText } from "~/enums/PermitText";
+import type { PermitStatus } from "~/types/product/PermitStatus";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -32,9 +33,9 @@ export function usePermitStatus() {
 
     const getPermitLabel = (status: PermitStatus, useAllowedUntil: string) => {
         const labels: Record<PermitStatus, string> = {
-            expired: `Termin dopuszczenia minął ${formatDate(useAllowedUntil)}`,
-            expiring: `Termin dopuszczenia upływa ${formatDate(useAllowedUntil)}`,
-            active: "Aktualnie dopuszczony do użytku",
+            expired: `${PermitText.Expired} ${formatDate(useAllowedUntil)}`,
+            expiring: `${PermitText.Expiring} ${formatDate(useAllowedUntil)}`,
+            active: PermitText.Active,
         };
         return labels[status];
     };

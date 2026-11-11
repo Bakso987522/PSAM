@@ -2,10 +2,11 @@
 import { ComboboxAnchor, ComboboxInput, ComboboxRoot } from "reka-ui";
 import SearchIcon from "~/components/icons/SearchIcon.vue";
 import SuggestionList from "~/components/search/SuggestionList.vue";
+import { SearchText } from "~/enums/SearchText";
 import { MIN_SEARCH_LENGTH } from "~/constants/search";
 import { useSuggestion } from "~/hooks/useSuggestion";
 import { useSuggestionFetch } from "~/hooks/useSuggestionFetch";
-import type { Suggestion } from "~/types/Suggestion";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 interface SearchFieldProps {
     label: string;
@@ -17,7 +18,7 @@ interface SearchFieldProps {
 const {
     label,
     endpoint,
-    placeholder = "Szukaj",
+    placeholder = SearchText.DefaultPlaceholder,
     minLength = MIN_SEARCH_LENGTH,
 } = defineProps<SearchFieldProps>();
 

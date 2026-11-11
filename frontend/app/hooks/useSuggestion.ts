@@ -1,4 +1,4 @@
-import type { Suggestion } from "~/types/Suggestion";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 export function useSuggestion() {
     const isSameSuggestion = (first?: Suggestion, second?: Suggestion) => {

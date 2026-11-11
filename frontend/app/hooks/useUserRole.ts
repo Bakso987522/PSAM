@@ -3,7 +3,7 @@ import {
     USER_ROLE_COOKIE,
     USER_ROLE_COOKIE_MAX_AGE,
 } from "~/constants/search";
-import type { UserRole } from "~/types/UserRole";
+import type { UserRole } from "~/enums/UserRole";
 
 export function useUserRole() {
     const role = useCookie<UserRole>(USER_ROLE_COOKIE, {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import PermitBadge from "~/components/results/PermitBadge.vue";
 import { ROUTES } from "~/constants/routes";
+import { ResultsText } from "~/enums/ResultsText";
 import { useProductFormatter } from "~/hooks/useProductFormatter";
 import { useRecentProducts } from "~/hooks/useRecentProducts";
-import type { SearchResult } from "~/types/SearchResult";
+import type { SearchResult } from "~/types/search/SearchResult";
 
 interface ResultCardProps {
     result: SearchResult;
@@ -33,10 +34,12 @@ const rememberProduct = () => {
         <div class="flex min-w-0 flex-col gap-0.5">
             <span class="text-lg">{{ result.name }}</span>
             <span class="text-muted">
-                Substancje czynne: {{ formatSubstances(result.substances) }}
+                {{ ResultsText.Substances }}
+                {{ formatSubstances(result.substances) }}
             </span>
             <span class="text-sm text-muted">
-                {{ formatProductTypes(result.productTypes) }} · Użytkownik:
+                {{ formatProductTypes(result.productTypes) }} ·
+                {{ ResultsText.User }}
                 {{ getUserLabel(result.forAmateurs) }}
             </span>
         </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { BreadcrumbItem } from "~/types/BreadcrumbItem";
+import { LayoutText } from "~/enums/LayoutText";
+import type { BreadcrumbItem } from "~/types/ui/BreadcrumbItem";
 
 interface AppBreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -9,7 +10,7 @@ const { items } = defineProps<AppBreadcrumbsProps>();
 </script>
 
 <template>
-    <nav aria-label="Ścieżka nawigacji">
+    <nav :aria-label="LayoutText.BreadcrumbsLabel">
         <ol class="flex flex-wrap items-center gap-2">
             <li
                 v-for="(item, index) in items"

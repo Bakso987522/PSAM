@@ -1,5 +1,6 @@
-import type { ProductSubstance } from "~/types/ProductSubstance";
-import type { SearchResult } from "~/types/SearchResult";
+import { ProductUserLabel } from "~/enums/ProductUserLabel";
+import type { ProductSubstance } from "~/types/product/ProductSubstance";
+import type { SearchResult } from "~/types/search/SearchResult";
 
 const contentFormatter = new Intl.NumberFormat("pl-PL", {
     maximumFractionDigits: 4,
@@ -27,7 +28,9 @@ export function useProductFormatter() {
     };
 
     const getUserLabel = (forAmateurs: boolean) => {
-        return forAmateurs ? "nieprofesjonalny" : "profesjonalny";
+        return forAmateurs
+            ? ProductUserLabel.Amateur
+            : ProductUserLabel.Professional;
     };
 
     const getProductHint = (product: SearchResult) => {

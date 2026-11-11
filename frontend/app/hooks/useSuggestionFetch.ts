@@ -1,6 +1,10 @@
 import type { Ref } from "vue";
 import { SUGGESTION_DEBOUNCE_MS } from "~/constants/search";
-import type { Suggestion } from "~/types/Suggestion";
+import type {
+    SuggestApiRequest,
+    SuggestionApiResponse,
+} from "~/types/api/suggest";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 const isSuggestion = (value: unknown): value is Suggestion => {
     return (
@@ -34,8 +38,8 @@ export function useSuggestionFetch(
         abortController = controller;
 
         try {
-            const response = await $fetch<unknown>(endpoint, {
-                query: { q: query },
+            const response = await $fetch<SuggestionApiResponse>(endpoint, {
+                query: { q: query } satisfies SuggestApiRequest,
                 signal: controller.signal,
             });
             suggestions.value = Array.isArray(response)

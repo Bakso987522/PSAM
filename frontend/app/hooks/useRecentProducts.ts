@@ -2,7 +2,7 @@ import {
     RECENT_PRODUCTS_LIMIT,
     RECENT_PRODUCTS_STORAGE_KEY,
 } from "~/constants/search";
-import type { RecentProduct } from "~/types/RecentProduct";
+import type { RecentProduct } from "~/types/product/RecentProduct";
 
 const isRecentProduct = (value: unknown): value is RecentProduct => {
     return (

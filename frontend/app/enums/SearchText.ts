@@ -1,0 +1,15 @@
+export enum SearchText {
+    NameLabel = "Nazwa handlowa lub substancja czynna:",
+    CropLabel = "Uprawa",
+    PestLabel = "Agrofag",
+    PestPlaceholder = "Wybierz agrofaga",
+    ProductTypeLabel = "Rodzaj środka",
+    ProductTypePlaceholder = "Np. herbicyd, fungicyd",
+    DefaultPlaceholder = "Szukaj",
+    Submit = "Szukaj",
+    RoleLabel = "Rola użytkownika",
+    SuggestionsLoading = "Szukam…",
+    SuggestionsEmpty = "Brak podpowiedzi",
+    RecentProducts = "Ostatnio przeglądane",
+    DataVersion = "Dane z rejestru z dnia",
+}

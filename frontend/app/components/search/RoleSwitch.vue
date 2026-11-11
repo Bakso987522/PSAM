@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { RadioGroupItem, RadioGroupRoot } from "reka-ui";
 import { ROLE_OPTIONS } from "~/constants/search";
-import type { UserRole } from "~/types/UserRole";
+import { SearchText } from "~/enums/SearchText";
+import type { UserRole } from "~/enums/UserRole";
 
 const role = defineModel<UserRole>({ required: true });
 
@@ -10,7 +11,7 @@ const labelId = useId();
 
 <template>
     <div class="flex flex-col gap-2">
-        <span :id="labelId" class="font-bold">Rola użytkownika</span>
+        <span :id="labelId" class="font-bold">{{ SearchText.RoleLabel }}</span>
         <RadioGroupRoot
             v-model="role"
             :aria-labelledby="labelId"

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { LayoutText } from "~/enums/LayoutText";
+
 interface FilterChipProps {
     label: string;
 }
@@ -17,7 +19,7 @@ const emit = defineEmits<{
         <span>{{ label }}</span>
         <button
             type="button"
-            :aria-label="`Usuń ${label}`"
+            :aria-label="`${LayoutText.RemoveChip} ${label}`"
             class="flex size-6 items-center justify-center rounded-badge transition-colors hover:bg-white"
             @click="emit('remove')"
         >

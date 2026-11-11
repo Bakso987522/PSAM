@@ -2,10 +2,12 @@ import type { LocationQuery, LocationQueryRaw, LocationQueryValue } from "vue-ro
 import { ROUTES } from "~/constants/routes";
 import { ROLE_OPTIONS } from "~/constants/search";
 import { useProductFormatter } from "~/hooks/useProductFormatter";
-import { searchMockProducts } from "~/mocks/searchProducts";
-import type { ActiveFilter, ListFilterKind } from "~/types/ActiveFilter";
-import type { SearchCriteria } from "~/types/SearchCriteria";
-import type { UserRole } from "~/types/UserRole";
+import { EMPTY_SEARCH_RESPONSE, toSearchResponse } from "~/mappers/search";
+import { fetchSearch } from "~/services/api";
+import type { SearchApiRequest } from "~/types/api/search";
+import type { ActiveFilter, ListFilterKind } from "~/types/search/ActiveFilter";
+import type { SearchCriteria } from "~/types/search/SearchCriteria";
+import { UserRole } from "~/enums/UserRole";
 
 const LIST_FILTER_KINDS: ListFilterKind[] = ["crops", "pests", "productTypes"];
 
@@ -35,6 +37,28 @@ const parseSearchCriteria = (query: LocationQuery): SearchCriteria => {
     };
 };
 
+const toSearchApiRequest = (criteria: SearchCriteria): SearchApiRequest => {
+    return {
+        q: criteria.q,
+        crops: criteria.crops,
+        pests: criteria.pests,
+        productTypes: criteria.productTypes,
+        role: criteria.role,
+    };
+};
+
+const searchProducts = async (criteria: SearchCriteria) => {
+    const params = toSearchApiRequest(criteria);
+    const response = await fetchSearch(params);
+
+    if (criteria.role !== UserRole.Amateur || response.count > 0) {
+        return toSearchResponse(response);
+    }
+
+    const professional = await fetchSearch({ ...params, role: UserRole.Professional });
+    return toSearchResponse(response, professional.count > 0);
+};
+
 const toLocationQuery = (criteria: SearchCriteria): LocationQueryRaw => {
     return {
         q: criteria.q,
@@ -50,7 +74,14 @@ export function useSearchResults() {
     const { capitalize } = useProductFormatter();
 
     const criteria = computed(() => parseSearchCriteria(route.query));
-    const response = computed(() => searchMockProducts(criteria.value));
+    const {
+        data: response,
+        status,
+        error,
+    } = useAsyncData("search-results", () => searchProducts(criteria.value), {
+        watch: [criteria],
+        default: () => EMPTY_SEARCH_RESPONSE,
+    });
 
     const activeFilters = computed<ActiveFilter[]>(() => {
         const { q, role } = criteria.value;
@@ -124,6 +155,8 @@ export function useSearchResults() {
     return {
         criteria,
         response,
+        status,
+        error,
         activeFilters,
         removeFilter,
         clearFilters,

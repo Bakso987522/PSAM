@@ -4,6 +4,7 @@ import RoleSwitch from "~/components/search/RoleSwitch.vue";
 import SearchField from "~/components/search/SearchField.vue";
 import AppButton from "~/components/ui/AppButton.vue";
 import { API_ENDPOINTS } from "~/constants/api";
+import { SearchText } from "~/enums/SearchText";
 import { useSearchForm } from "~/hooks/useSearchForm";
 
 const {
@@ -24,32 +25,32 @@ const {
     <form role="search" class="flex flex-col gap-5" @submit.prevent="submitSearch">
         <SearchField
             v-model:term="term"
-            label="Nazwa handlowa lub substancja czynna:"
+            :label="SearchText.NameLabel"
             :endpoint="API_ENDPOINTS.suggestNames"
         />
         <FilterField
             v-model="crops"
             v-model:term="cropsTerm"
-            label="Uprawa"
+            :label="SearchText.CropLabel"
             :endpoint="API_ENDPOINTS.suggestCrops"
         />
         <FilterField
             v-model="pests"
             v-model:term="pestsTerm"
-            label="Agrofag"
-            placeholder="Wybierz agrofaga"
+            :label="SearchText.PestLabel"
+            :placeholder="SearchText.PestPlaceholder"
             :endpoint="API_ENDPOINTS.suggestPests"
         />
         <FilterField
             v-model="productTypes"
             v-model:term="productTypesTerm"
-            label="Rodzaj środka"
-            placeholder="Np. herbicyd, fungicyd"
+            :label="SearchText.ProductTypeLabel"
+            :placeholder="SearchText.ProductTypePlaceholder"
             :endpoint="API_ENDPOINTS.suggestProductTypes"
         />
         <RoleSwitch v-model="role" />
         <AppButton type="submit" :disabled="!canSubmit" class="mt-2 w-full">
-            Szukaj
+            {{ SearchText.Submit }}
         </AppButton>
     </form>
 </template>

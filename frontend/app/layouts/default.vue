@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Logo from "~/components/Logo.vue";
+import { LayoutText } from "~/enums/LayoutText";
 </script>
 
 <template>
@@ -16,7 +17,7 @@ import Logo from "~/components/Logo.vue";
         </main>
         <footer class="bg-primary text-center">
             <p class="py-4 text-white font-bold">
-                Created by Damian Nowak, Jakub Bakaj, Natalia Duda
+                {{ LayoutText.Footer }}
             </p>
         </footer>
     </div>

@@ -1,4 +1,4 @@
-import type { ProductSubstance } from "~/types/ProductSubstance";
+import type { ProductSubstance } from "~/types/product/ProductSubstance";
 
 export interface SearchResult {
     idSor: string;

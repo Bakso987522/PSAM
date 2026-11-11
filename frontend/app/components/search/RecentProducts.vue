@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
+import { SearchText } from "~/enums/SearchText";
 import { useRecentProducts } from "~/hooks/useRecentProducts";
 
 const { recentProducts } = useRecentProducts();
@@ -7,7 +8,7 @@ const { recentProducts } = useRecentProducts();
 
 <template>
     <section v-if="recentProducts.length > 0" class="flex flex-col gap-3">
-        <h2 class="text-lg font-bold">Ostatnio przeglądane</h2>
+        <h2 class="text-lg font-bold">{{ SearchText.RecentProducts }}</h2>
         <ul class="flex flex-col gap-2">
             <li v-for="product in recentProducts" :key="product.id">
                 <NuxtLink

@@ -5,8 +5,9 @@ import {
     ComboboxItem,
     ComboboxViewport,
 } from "reka-ui";
+import { SearchText } from "~/enums/SearchText";
 import { useSuggestion } from "~/hooks/useSuggestion";
-import type { Suggestion } from "~/types/Suggestion";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 interface SuggestionListProps {
     suggestions: Suggestion[];
@@ -26,7 +27,11 @@ const { getSuggestionKey } = useSuggestion();
     >
         <ComboboxViewport class="max-h-72 p-1">
             <ComboboxEmpty class="px-3 py-2 text-sm text-muted">
-                {{ isLoading ? "Szukam…" : "Brak podpowiedzi" }}
+                {{
+                    isLoading
+                        ? SearchText.SuggestionsLoading
+                        : SearchText.SuggestionsEmpty
+                }}
             </ComboboxEmpty>
             <ComboboxItem
                 v-for="suggestion in suggestions"

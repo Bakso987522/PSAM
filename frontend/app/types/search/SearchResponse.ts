@@ -1,5 +1,5 @@
-import type { RemovedProduct } from "~/types/RemovedProduct";
-import type { SearchResult } from "~/types/SearchResult";
+import type { RemovedProduct } from "~/types/search/RemovedProduct";
+import type { SearchResult } from "~/types/search/SearchResult";
 
 export interface SearchResponse {
     total: number;

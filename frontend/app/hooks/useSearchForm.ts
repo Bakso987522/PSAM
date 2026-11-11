@@ -2,8 +2,8 @@ import { ROUTES } from "~/constants/routes";
 import { MIN_SEARCH_LENGTH, MIN_SUGGESTION_LENGTH } from "~/constants/search";
 import { useSuggestion } from "~/hooks/useSuggestion";
 import { useUserRole } from "~/hooks/useUserRole";
-import type { SearchQuery } from "~/types/SearchQuery";
-import type { Suggestion } from "~/types/Suggestion";
+import type { SearchQuery } from "~/types/search/SearchQuery";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 export function useSearchForm() {
     const { role } = useUserRole();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePermitStatus } from "~/hooks/usePermitStatus";
-import type { PermitStatus } from "~/types/PermitStatus";
+import type { PermitStatus } from "~/types/product/PermitStatus";
 
 interface PermitBadgeProps {
     useAllowedUntil: string;

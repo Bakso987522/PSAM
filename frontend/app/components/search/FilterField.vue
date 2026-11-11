@@ -3,10 +3,11 @@ import { ComboboxAnchor, ComboboxInput, ComboboxRoot } from "reka-ui";
 import SearchIcon from "~/components/icons/SearchIcon.vue";
 import FilterChip from "~/components/search/FilterChip.vue";
 import SuggestionList from "~/components/search/SuggestionList.vue";
+import { SearchText } from "~/enums/SearchText";
 import { MIN_SUGGESTION_LENGTH } from "~/constants/search";
 import { useSuggestion } from "~/hooks/useSuggestion";
 import { useSuggestionFetch } from "~/hooks/useSuggestionFetch";
-import type { Suggestion } from "~/types/Suggestion";
+import type { Suggestion } from "~/types/search/Suggestion";
 
 interface FilterFieldProps {
     label: string;
@@ -18,7 +19,7 @@ interface FilterFieldProps {
 const {
     label,
     endpoint,
-    placeholder = "Szukaj",
+    placeholder = SearchText.DefaultPlaceholder,
     minLength = MIN_SUGGESTION_LENGTH,
 } = defineProps<FilterFieldProps>();
 
