@@ -32,7 +32,6 @@ export interface SearchFiltersAppliedApiResponse {
 export interface SearchApiResponse {
     filters_applied: SearchFiltersAppliedApiResponse;
     count: number;
-    /** Liczba wszystkich pasujących środków; pojawi się po wdrożeniu paginacji w API. */
     total?: number;
     results: SearchResultApiResponse[];
 }

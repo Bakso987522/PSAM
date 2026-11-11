@@ -1,4 +1,8 @@
-import type { LocationQuery, LocationQueryRaw, LocationQueryValue } from "vue-router";
+import type {
+    LocationQuery,
+    LocationQueryRaw,
+    LocationQueryValue,
+} from "vue-router";
 import { ROUTES } from "~/constants/routes";
 import {
     DEFAULT_PAGE,
@@ -83,7 +87,10 @@ const searchProducts = async (criteria: SearchCriteria) => {
         return toSearchResponse(response, criteria);
     }
 
-    const professional = await fetchSearch({ ...params, role: UserRole.Professional });
+    const professional = await fetchSearch({
+        ...params,
+        role: UserRole.Professional,
+    });
     return toSearchResponse(response, criteria, hasResults(professional));
 };
 
@@ -96,7 +103,9 @@ const toLocationQuery = (criteria: SearchCriteria): LocationQueryRaw => {
         role: criteria.role,
         page: criteria.page === DEFAULT_PAGE ? undefined : criteria.page,
         pageCount:
-            criteria.pageCount === DEFAULT_PAGE_SIZE ? undefined : criteria.pageCount,
+            criteria.pageCount === DEFAULT_PAGE_SIZE
+                ? undefined
+                : criteria.pageCount,
     };
 };
 
@@ -194,15 +203,21 @@ export function useSearchResults() {
     };
 
     const setPageCount = async (pageCount: PageSize) => {
-        await replaceCriteria({ ...criteria.value, pageCount, page: DEFAULT_PAGE });
+        await replaceCriteria({
+            ...criteria.value,
+            pageCount,
+            page: DEFAULT_PAGE,
+        });
     };
 
-    // Strona spoza zakresu (np. ręcznie wpisany ?page=99) — wróć na ostatnią.
     watch(response, ({ total }) => {
         if (status.value !== "success") {
             return;
         }
-        const lastPage = Math.max(1, Math.ceil(total / criteria.value.pageCount));
+        const lastPage = Math.max(
+            1,
+            Math.ceil(total / criteria.value.pageCount),
+        );
         if (criteria.value.page > lastPage) {
             void replaceCriteria({ ...criteria.value, page: lastPage });
         }

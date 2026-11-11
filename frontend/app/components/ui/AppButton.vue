@@ -5,7 +5,6 @@ interface AppButtonProps {
     variant?: "primary" | "outline" | "soft";
     type?: "button" | "submit" | "reset";
     to?: RouteLocationRaw;
-    /** true: always square; "mobile": square below `lg`, regular above */
     iconOnly?: boolean | "mobile";
 }
 
