@@ -1,3 +1,4 @@
+import type { PageSize } from "~/constants/search";
 import type { UserRole } from "~/enums/UserRole";
 
 export interface SearchCriteria {
@@ -6,4 +7,6 @@ export interface SearchCriteria {
     pests: string[];
     productTypes: string[];
     role?: UserRole;
+    page: number;
+    pageCount: PageSize;
 }

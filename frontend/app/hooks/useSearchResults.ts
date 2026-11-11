@@ -1,6 +1,12 @@
 import type { LocationQuery, LocationQueryRaw, LocationQueryValue } from "vue-router";
 import { ROUTES } from "~/constants/routes";
-import { ROLE_OPTIONS } from "~/constants/search";
+import {
+    DEFAULT_PAGE,
+    DEFAULT_PAGE_SIZE,
+    PAGE_SIZE_OPTIONS,
+    ROLE_OPTIONS,
+    type PageSize,
+} from "~/constants/search";
 import { useProductFormatter } from "~/hooks/useProductFormatter";
 import { EMPTY_SEARCH_RESPONSE, toSearchResponse } from "~/mappers/search";
 import { fetchSearch } from "~/services/api";
@@ -25,6 +31,20 @@ const isUserRole = (value: unknown): value is UserRole => {
     return ROLE_OPTIONS.some((option) => option.value === value);
 };
 
+const isPageSize = (value: number): value is PageSize => {
+    return PAGE_SIZE_OPTIONS.some((option) => option === value);
+};
+
+const parsePage = (value: string | undefined) => {
+    const page = Number(value);
+    return Number.isInteger(page) && page >= 1 ? page : DEFAULT_PAGE;
+};
+
+const parsePageCount = (value: string | undefined): PageSize => {
+    const pageCount = Number(value);
+    return isPageSize(pageCount) ? pageCount : DEFAULT_PAGE_SIZE;
+};
+
 const parseSearchCriteria = (query: LocationQuery): SearchCriteria => {
     const role = toStringList(query.role)[0];
 
@@ -34,6 +54,8 @@ const parseSearchCriteria = (query: LocationQuery): SearchCriteria => {
         pests: toStringList(query.pests),
         productTypes: toStringList(query.productTypes),
         role: isUserRole(role) ? role : undefined,
+        page: parsePage(toStringList(query.page)[0]),
+        pageCount: parsePageCount(toStringList(query.pageCount)[0]),
     };
 };
 
@@ -44,6 +66,8 @@ const toSearchApiRequest = (criteria: SearchCriteria): SearchApiRequest => {
         pests: criteria.pests,
         productTypes: criteria.productTypes,
         role: criteria.role,
+        page: criteria.page,
+        pageCount: criteria.pageCount,
     };
 };
 
@@ -51,12 +75,16 @@ const searchProducts = async (criteria: SearchCriteria) => {
     const params = toSearchApiRequest(criteria);
     const response = await fetchSearch(params);
 
-    if (criteria.role !== UserRole.Amateur || response.count > 0) {
-        return toSearchResponse(response);
+    const hasResults = (result: typeof response) => {
+        return (result.total ?? result.count) > 0;
+    };
+
+    if (criteria.role !== UserRole.Amateur || hasResults(response)) {
+        return toSearchResponse(response, criteria);
     }
 
     const professional = await fetchSearch({ ...params, role: UserRole.Professional });
-    return toSearchResponse(response, professional.count > 0);
+    return toSearchResponse(response, criteria, hasResults(professional));
 };
 
 const toLocationQuery = (criteria: SearchCriteria): LocationQueryRaw => {
@@ -66,6 +94,9 @@ const toLocationQuery = (criteria: SearchCriteria): LocationQueryRaw => {
         pests: criteria.pests,
         productTypes: criteria.productTypes,
         role: criteria.role,
+        page: criteria.page === DEFAULT_PAGE ? undefined : criteria.page,
+        pageCount:
+            criteria.pageCount === DEFAULT_PAGE_SIZE ? undefined : criteria.pageCount,
     };
 };
 
@@ -123,7 +154,7 @@ export function useSearchResults() {
     };
 
     const removeFilter = async (filter: ActiveFilter) => {
-        const nextCriteria = { ...criteria.value };
+        const nextCriteria = { ...criteria.value, page: DEFAULT_PAGE };
 
         if (filter.kind === "q") {
             nextCriteria.q = undefined;
@@ -145,12 +176,37 @@ export function useSearchResults() {
             pests: [],
             productTypes: [],
             role: criteria.value.role,
+            page: DEFAULT_PAGE,
+            pageCount: criteria.value.pageCount,
         });
     };
 
     const setRole = async (role: UserRole) => {
-        await replaceCriteria({ ...criteria.value, role });
+        await replaceCriteria({ ...criteria.value, role, page: DEFAULT_PAGE });
     };
+
+    const setPage = async (page: number) => {
+        await navigateTo({
+            path: ROUTES.results,
+            query: toLocationQuery({ ...criteria.value, page }),
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const setPageCount = async (pageCount: PageSize) => {
+        await replaceCriteria({ ...criteria.value, pageCount, page: DEFAULT_PAGE });
+    };
+
+    // Strona spoza zakresu (np. ręcznie wpisany ?page=99) — wróć na ostatnią.
+    watch(response, ({ total }) => {
+        if (status.value !== "success") {
+            return;
+        }
+        const lastPage = Math.max(1, Math.ceil(total / criteria.value.pageCount));
+        if (criteria.value.page > lastPage) {
+            void replaceCriteria({ ...criteria.value, page: lastPage });
+        }
+    });
 
     return {
         criteria,
@@ -161,5 +217,7 @@ export function useSearchResults() {
         removeFilter,
         clearFilters,
         setRole,
+        setPage,
+        setPageCount,
     };
 }

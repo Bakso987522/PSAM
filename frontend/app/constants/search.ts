@@ -19,3 +19,8 @@ export const ROLE_OPTIONS: RoleOption[] = [
 ];
 
 export const PERMIT_EXPIRY_WARNING_DAYS = 90;
+
+export const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
+export type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];
+export const DEFAULT_PAGE_SIZE: PageSize = 10;
+export const DEFAULT_PAGE = 1;

@@ -6,6 +6,8 @@ export interface SearchApiRequest {
     pests?: string[];
     productTypes?: string[];
     role?: UserRole;
+    page?: number;
+    pageCount?: number;
 }
 
 export interface SearchResultApiResponse {
@@ -30,5 +32,7 @@ export interface SearchFiltersAppliedApiResponse {
 export interface SearchApiResponse {
     filters_applied: SearchFiltersAppliedApiResponse;
     count: number;
+    /** Liczba wszystkich pasujących środków; pojawi się po wdrożeniu paginacji w API. */
+    total?: number;
     results: SearchResultApiResponse[];
 }

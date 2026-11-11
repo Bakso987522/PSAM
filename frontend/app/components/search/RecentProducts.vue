@@ -7,7 +7,10 @@ const { recentProducts } = useRecentProducts();
 </script>
 
 <template>
-    <section v-if="recentProducts.length > 0" class="flex flex-col gap-3">
+    <section
+        v-if="recentProducts.length > 0"
+        class="flex flex-col gap-3 lg:border-l lg:border-line lg:pl-6"
+    >
         <h2 class="text-lg font-bold">{{ SearchText.RecentProducts }}</h2>
         <ul class="flex flex-col gap-2">
             <li v-for="product in recentProducts" :key="product.id">
