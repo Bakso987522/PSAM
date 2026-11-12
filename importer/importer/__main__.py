@@ -20,7 +20,7 @@ def log(conn: psycopg.Connection, published, status: str, message: str) -> None:
 
 
 def run(force: bool) -> None:
-    dataset_id = os.environ.get("DANE_GOV_DATASET_ID")
+    dataset_id = os.environ["DANE_GOV_DATASET_ID"]
     with psycopg.connect(os.environ["DATABASE_URL"], autocommit=True) as conn:
         with httpx.Client(timeout=60) as client:
             published, urls = source.latest_version(client, dataset_id)

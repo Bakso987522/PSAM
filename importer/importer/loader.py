@@ -22,7 +22,7 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
 
     rows = []
-    product_types = set()
+    type_links = set()
     for p in basic:
         card = cards.get(p["id_sor"])
         if card is None:
@@ -34,17 +34,17 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         # Rodzaj can be multiple: "Akarycyd, Insektycyd"
         for name in (p["Rodzaj"] or "").split(","):
             if name.strip():
-                product_types.add((p["id_sor"], name.strip()))
+                type_links.add((p["id_sor"], name.strip()))
 
     with conn.transaction(), conn.cursor() as cur:
         cur.executemany(UPSERT_PRODUCT, rows)
 
         cur.executemany("INSERT INTO product_type (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
-                        [(name,) for name in sorted({name for _, name in product_types})])
+                        [(name,) for name in sorted({name for _, name in type_links})])
         type_ids = dict(cur.execute("SELECT name, id FROM product_type").fetchall())
         cur.execute("DELETE FROM product_product_type")
         cur.executemany("INSERT INTO product_product_type (product_id, product_type_id) VALUES (%s, %s)",
-                        [(product_id, type_ids[name]) for product_id, name in product_types])
+                        [(product_id, type_ids[name]) for product_id, name in type_links])
 
     return {"products": len(rows), "for_amateurs": sum(r[7] for r in rows),
-            "product_types": len(product_types)}
+            "types": len(type_ids), "type_links": len(type_links)}
