@@ -8,6 +8,7 @@ API_URL = "https://api.dane.gov.pl/1.4/datasets/{dataset_id}/resources"
 FILES = {
     "rejestr podstawowy": "basic",
     "rejestr kart": "cards",
+    "słownik substancji aktywnych": "substances",
 }
 
 

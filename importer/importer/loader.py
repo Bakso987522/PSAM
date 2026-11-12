@@ -16,13 +16,26 @@ UPSERT_PRODUCT = """
         label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name
 """
 
+def dictionary(cur: psycopg.Cursor, table: str, names) -> dict[str, int]:
+    cur.executemany(
+        f"INSERT INTO {table} (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
+        [(name,) for name in sorted(names)],
+    )
+    return {
+        parsers.norm(name): row_id
+        for name, row_id in cur.execute(f"SELECT name, id FROM {table}")
+    }
+
 
 def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     basic = parsers.read_xlsx("basic", files["basic"])
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
+    substances = [r["Nazwa_SBCZ"] for r in parsers.read_csv("substances", files["substances"])]
+    pattern = parsers.composition_pattern(substances)
 
     rows = []
     type_links = set()
+    composition = {}
     for p in basic:
         card = cards.get(p["id_sor"])
         if card is None:
@@ -35,16 +48,35 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         for name in (p["Rodzaj"] or "").split(","):
             if name.strip():
                 type_links.add((p["id_sor"], name.strip()))
+        for name, content, unit in parsers.parse_composition(pattern, p["Zawartosc_SBCZ_prosty"]):
+            composition[(p["id_sor"], parsers.norm(name))] = (content, unit)
 
     with conn.transaction(), conn.cursor() as cur:
         cur.executemany(UPSERT_PRODUCT, rows)
 
-        cur.executemany("INSERT INTO product_type (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
-                        [(name,) for name in sorted({name for _, name in type_links})])
-        type_ids = dict(cur.execute("SELECT name, id FROM product_type").fetchall())
+        type_ids = dictionary(cur, "product_type", {name for _, name in type_links})
         cur.execute("DELETE FROM product_product_type")
-        cur.executemany("INSERT INTO product_product_type (product_id, product_type_id) VALUES (%s, %s)",
-                        [(product_id, type_ids[name]) for product_id, name in type_links])
+        cur.executemany(
+            "INSERT INTO product_product_type (product_id, product_type_id) VALUES (%s, %s)",
+            {(product_id, type_ids[parsers.norm(name)]) for product_id, name in type_links},
+        )
 
-    return {"products": len(rows), "for_amateurs": sum(r[7] for r in rows),
-            "types": len(type_ids), "type_links": len(type_links)}
+        substance_ids = dictionary(cur, "active_substance", substances)
+        cur.execute("DELETE FROM product_substance")
+        cur.executemany(
+            "INSERT INTO product_substance (product_id, substance_id, content, unit)"
+            " VALUES (%s, %s, %s, %s)",
+            [
+                (product_id, substance_ids[key], content, unit)
+                for (product_id, key), (content, unit) in composition.items()
+            ],
+        )
+
+    return {
+        "products": len(rows),
+        "for_amateurs": sum(r[7] for r in rows),
+        "types": len(type_ids),
+        "type_links": len(type_links),
+        "substances": len(substance_ids),
+        "composition": len(composition),
+    }
