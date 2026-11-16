@@ -32,7 +32,7 @@ def run(force: bool) -> None:
             files = source.download_all(client, urls)
 
         try:
-            stats = loader.load(conn, files)
+            stats = loader.load(conn, files, published)
         except Exception as e:
             log(conn, published, "failed", f"{type(e).__name__}: {e}")
             raise

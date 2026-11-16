@@ -1,6 +1,7 @@
 import psycopg
 
 from importer import parsers
+from datetime import date
 
 UPSERT_PRODUCT = """
     INSERT INTO product (id_sor, name, producer, permit_number, permit_valid_until,
@@ -13,8 +14,15 @@ UPSERT_PRODUCT = """
         sale_allowed_until = EXCLUDED.sale_allowed_until,
         use_allowed_until = EXCLUDED.use_allowed_until,
         for_amateurs = EXCLUDED.for_amateurs, packaging = EXCLUDED.packaging,
-        label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name
+        label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name,
+        removed_at =NULL
 """
+
+MARK_REMOVED = """
+    UPDATE product SET removed_at = %s
+    WHERE removed_at IS NULL AND NOT (id_sor = ANY(%s))
+"""
+
 INSERT_USAGE = """
     INSERT INTO usage (id, product_id, group_id, dose, timing, method, combined_use, minor_use,
         pre_harvest_days, pre_harvest_source)
@@ -42,7 +50,7 @@ def merge_names(dictionary_names: list[str], used: list[list[str]]) -> tuple[lis
     return list(names.values()), outside
 
 
-def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
+def load(conn: psycopg.Connection, files: dict[str, bytes], published: date) -> dict:
     basic = parsers.read_xlsx("basic", files["basic"])
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
     substances = [r["Nazwa_SBCZ"] for r in parsers.read_csv("substances", files["substances"])]
@@ -98,6 +106,7 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     pest_names, pests_outside = merge_names(pests, usage_pests)    
     with conn.transaction(), conn.cursor() as cur:
         cur.executemany(UPSERT_PRODUCT, rows)
+        removed = cur.execute(MARK_REMOVED, (published, list(product_ids))).rowcount
 
         type_ids = dictionary(cur, "product_type", {name for _, name in type_links})
         cur.execute("DELETE FROM product_product_type")
@@ -172,4 +181,5 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         "pests_outside_dictionary": pests_outside,
         "pest_links": len(pest_links),
         "pre_harvest": sum(row[7] is not None for row in usage_rows),
+        "removed": removed,
     }
