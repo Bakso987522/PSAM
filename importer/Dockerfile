@@ -16,4 +16,4 @@ COPY . .
 
 # Harmonogram z IMPORT_CRON; supercronic nie rozwija zmiennych w crontabie,
 # więc plik jest generowany przy starcie kontenera.
-CMD ["sh", "-c", "echo \"$IMPORT_CRON python -m importer run\" > /tmp/crontab && exec supercronic /tmp/crontab"]
+CMD ["sh", "-c", "echo \"$IMPORT_CRON python -m importer run\" > /tmp/crontab && exec /usr/local/bin/supercronic /tmp/crontab"]
