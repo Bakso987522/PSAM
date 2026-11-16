@@ -16,8 +16,9 @@ UPSERT_PRODUCT = """
         label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name
 """
 INSERT_USAGE = """
-    INSERT INTO usage (id, product_id, group_id, dose, timing, method, combined_use, minor_use)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO usage (id, product_id, group_id, dose, timing, method, combined_use, minor_use,
+        pre_harvest_days, pre_harvest_source)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 def dictionary(cur: psycopg.Cursor, table: str, names) -> dict[str, int]:
@@ -78,6 +79,7 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     for u in usages:
         if u["id_sor"] not in product_ids:
             raise ValueError(f"usage refers to product {u['id_sor']} missing from the basic register")
+        days = parsers.pre_harvest_days(u["termin"])
         usage_rows.append((
             u["id_sor"],
             u["grupa"],
@@ -86,6 +88,8 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
             u["metody_stosowania"],
             u["laczne_stosowanie"],
             u["maloobszarowe"] == 1,
+            days,
+            "register" if days is not None else None,
         ))
         usage_crops.append(parsers.split_list(u["uprawa"], crops_with_comma))
         usage_pests.append(parsers.split_list(u["agrofag"], pests_with_comma))
@@ -167,4 +171,5 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         "pests": len(pest_ids),
         "pests_outside_dictionary": pests_outside,
         "pest_links": len(pest_links),
+        "pre_harvest": sum(row[7] is not None for row in usage_rows),
     }

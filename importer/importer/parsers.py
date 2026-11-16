@@ -18,6 +18,11 @@ REQUIRED_COLUMNS = {
 }
 AMATEUR_USE = {"amatorskie", "amatorskie / profesjonalne"}
 
+PRE_HARVEST = re.compile(
+    r"karencj\w*(?:tj\.|[^.\d]){0,30}?(\d+)\s*dni\b",
+    re.IGNORECASE,
+)
+
 
 def _clean(v):
     if isinstance(v, str):
@@ -77,3 +82,7 @@ def split_list(text: str | None, names_with_comma: list[str]) -> list[str]:
             found.append(rest[i:i + len(name)])
             rest = rest[:i] + rest[i + len(name):]
     return found + [part.strip(" .") for part in rest.split(",") if part.strip(" .")]
+
+def pre_harvest_days(timing: str | None) -> int | None:
+    m = PRE_HARVEST.search(timing or "")
+    return int(m[1]) if m else None
