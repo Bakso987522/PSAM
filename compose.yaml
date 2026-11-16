@@ -34,10 +34,12 @@ services:
   importer:
     build: ./importer
     profiles: ["scheduler"]
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       DANE_GOV_DATASET_ID: ${DANE_GOV_DATASET_ID}
       IMPORT_CRON: ${IMPORT_CRON:-0 3 * * *}
+      TZ: Europe/Warsaw
     depends_on:
       db:
         condition: service_healthy

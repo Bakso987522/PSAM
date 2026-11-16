@@ -52,11 +52,11 @@ W pliku `.env` ustaw własne hasło do bazy (`POSTGRES_PASSWORD`). Pozostałe wa
 | `FRONTEND_PORT`, `API_PORT`, `DB_PORT` | porty na komputerze | 3000, 8000, 5432 |
 | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | dane dostępowe bazy | agrolupa, agrolupa, change-me |
 | `DANE_GOV_DATASET_ID` | numer zbioru w dane.gov.pl | 550 |
-| `IMPORT_CRON` | harmonogram importu w formacie cron | `0 3 * * *` (codziennie o 3:00) |
-
+| `IMPORT_CRON` | harmonogram importu, czas polski | `0 3 * * *` (codziennie o 3:00) |
+| `COMPOSE_PROFILES` | `scheduler` uruchamia importer razem z resztą usług | `scheduler` |
 ## Uruchomienie
 
-Uruchomienie bazy, API i frontendu:
+Uruchomienie bazy, API, frontendu i importera:
 
 ```bash
 docker compose up -d
@@ -88,6 +88,10 @@ Przydatne polecenia:
 | `docker compose up -d --build` | `task rebuild` | przebudowuje obrazy po zmianie zależności |
 | `docker compose run --rm importer python -m importer run` | `task import` | wykonuje import danych |
 | `docker compose down -v` i `docker compose up -d` | `task db:reset` | usuwa bazę i tworzy ją od nowa z `db/init/` |
+
+Importer sprawdza wersję rejestru przy starcie kontenera, a następnie codziennie o 3:00 czasu polskiego. Nowa wersja jest automatycznie wczytywana do bazy, a już wczytana jest pomijana.
+
+Logi importera można sprawdzić poleceniem `docker compose logs importer`.
 
 ## Struktura repozytorium
 
