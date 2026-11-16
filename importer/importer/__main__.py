@@ -32,7 +32,7 @@ def run(force: bool) -> None:
             files = source.download_all(client, urls)
 
         try:
-            stats = loader.load(conn, files, published)
+            stats = loader.load(conn, files, published, force)
         except Exception as e:
             log(conn, published, "failed", f"{type(e).__name__}: {e}")
             raise
@@ -44,7 +44,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="importer")
     sub = parser.add_subparsers(dest="command", required=True)
     run_parser = sub.add_parser("run", help="download and load newest data from register")
-    run_parser.add_argument("--force", action="store_true", help="load even if this version is already loaded")
+    run_parser.add_argument("--force", action="store_true", help="load even if this version is already loaded or smaller than current data")
     args = parser.parse_args()
 
     if args.command == "run":

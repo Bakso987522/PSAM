@@ -3,6 +3,8 @@ import psycopg
 from importer import parsers
 from datetime import date
 
+MIN_SIZE_RATIO = 0.8
+
 UPSERT_PRODUCT = """
     INSERT INTO product (id_sor, name, producer, permit_number, permit_valid_until,
         sale_allowed_until, use_allowed_until, for_amateurs, packaging, label_url, base_product_name)
@@ -49,8 +51,19 @@ def merge_names(dictionary_names: list[str], used: list[list[str]]) -> tuple[lis
                 outside += 1
     return list(names.values()), outside
 
+def check_size(cur: psycopg.Cursor, products: int, usages: int) -> None:
+    current_products = cur.execute(
+        "SELECT count(*) FROM product WHERE removed_at IS NULL"
+    ).fetchone()[0]
+    current_usages = cur.execute("SELECT count(*) FROM usage").fetchone()[0]
 
-def load(conn: psycopg.Connection, files: dict[str, bytes], published: date) -> dict:
+    if products < MIN_SIZE_RATIO * current_products or usages < MIN_SIZE_RATIO * current_usages:
+        raise ValueError(
+            f"new version has {products} products and {usages} usages, current data has "
+            f"{current_products} and {current_usages}; use --force if this is expected"
+        )
+
+def load(conn: psycopg.Connection, files: dict[str, bytes], published: date, force: bool = False) -> dict:
     basic = parsers.read_xlsx("basic", files["basic"])
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
     substances = [r["Nazwa_SBCZ"] for r in parsers.read_csv("substances", files["substances"])]
@@ -105,6 +118,8 @@ def load(conn: psycopg.Connection, files: dict[str, bytes], published: date) -> 
     crop_names, crops_outside = merge_names(crops, usage_crops)
     pest_names, pests_outside = merge_names(pests, usage_pests)    
     with conn.transaction(), conn.cursor() as cur:
+        if not force:
+            check_size(cur, len(rows), len(usage_rows))
         cur.executemany(UPSERT_PRODUCT, rows)
         removed = cur.execute(MARK_REMOVED, (published, list(product_ids))).rowcount
 
