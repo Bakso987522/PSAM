@@ -11,6 +11,8 @@ FILES = {
     "słownik substancji aktywnych": "substances",
     "rejestr zastosowań": "usages",
     "słownik grup stosowania": "groups",
+    "słownik uprawy": "crops",
+    "słownik agrofagów": "pests",
 }
 
 

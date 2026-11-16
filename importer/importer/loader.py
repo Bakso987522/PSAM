@@ -16,8 +16,8 @@ UPSERT_PRODUCT = """
         label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name
 """
 INSERT_USAGE = """
-    INSERT INTO usage (product_id, group_id, dose, timing, method, combined_use, minor_use)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO usage (id, product_id, group_id, dose, timing, method, combined_use, minor_use)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 def dictionary(cur: psycopg.Cursor, table: str, names) -> dict[str, int]:
@@ -30,6 +30,16 @@ def dictionary(cur: psycopg.Cursor, table: str, names) -> dict[str, int]:
         for name, row_id in cur.execute(f"SELECT name, id FROM {table}")
     }
 
+def merge_names(dictionary_names: list[str], used: list[list[str]]) -> tuple[list[str], int]:
+    names = {parsers.norm(name): name for name in dictionary_names}
+    outside = 0
+    for parts in used:
+        for name in parts:
+            if parsers.norm(name) not in names:
+                names[parsers.norm(name)] = name
+                outside += 1
+    return list(names.values()), outside
+
 
 def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     basic = parsers.read_xlsx("basic", files["basic"])
@@ -38,6 +48,8 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     pattern = parsers.composition_pattern(substances)
     usages = parsers.read_xlsx("usages", files["usages"])
     groups = parsers.read_csv("groups", files["groups"])
+    crops = [r["uprawa"] for r in parsers.read_csv("crops", files["crops"])]
+    pests = [r["agrofag"] for r in parsers.read_csv("pests", files["pests"])]
 
     rows = []
     type_links = set()
@@ -58,7 +70,11 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
             composition[(p["id_sor"], parsers.norm(name))] = (content, unit)
 
     product_ids = {p["id_sor"] for p in basic}
+    crops_with_comma = [name for name in crops if "," in name]
+    pests_with_comma = [name for name in pests if "," in name]
     usage_rows = []
+    usage_crops = []
+    usage_pests = []
     for u in usages:
         if u["id_sor"] not in product_ids:
             raise ValueError(f"usage refers to product {u['id_sor']} missing from the basic register")
@@ -71,6 +87,11 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
             u["laczne_stosowanie"],
             u["maloobszarowe"] == 1,
         ))
+        usage_crops.append(parsers.split_list(u["uprawa"], crops_with_comma))
+        usage_pests.append(parsers.split_list(u["agrofag"], pests_with_comma))
+
+    crop_names, crops_outside = merge_names(crops, usage_crops)
+    pest_names, pests_outside = merge_names(pests, usage_pests)    
     with conn.transaction(), conn.cursor() as cur:
         cur.executemany(UPSERT_PRODUCT, rows)
 
@@ -97,7 +118,39 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
             [(int(g["grupa"]), g["nazwa_grupy"]) for g in groups],
         )
         cur.execute("DELETE FROM usage")
-        cur.executemany(INSERT_USAGE, usage_rows)
+        usage_ids = [
+            usage_id
+            for (usage_id,) in cur.execute(
+                "SELECT nextval(pg_get_serial_sequence('usage', 'id')) FROM generate_series(1, %s)",
+                (len(usage_rows),),
+            )
+        ]
+        cur.executemany(
+            INSERT_USAGE,
+            [(usage_id, *row) for usage_id, row in zip(usage_ids, usage_rows)],
+        )
+
+        crop_ids = dictionary(cur, "crop", crop_names)
+        crop_links = {
+            (usage_id, crop_ids[parsers.norm(name)])
+            for usage_id, names in zip(usage_ids, usage_crops)
+            for name in names
+        }
+        cur.executemany(
+            "INSERT INTO usage_crop (usage_id, crop_id) VALUES (%s, %s)",
+            crop_links,
+        )
+
+        pest_ids = dictionary(cur, "pest", pest_names)
+        pest_links = {
+            (usage_id, pest_ids[parsers.norm(name)])
+            for usage_id, names in zip(usage_ids, usage_pests)
+            for name in names
+        }
+        cur.executemany(
+            "INSERT INTO usage_pest (usage_id, pest_id) VALUES (%s, %s)",
+            pest_links,
+        )
 
     return {
         "products": len(rows),
@@ -108,4 +161,10 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         "composition": len(composition),
         "groups": len(groups),
         "usages": len(usage_rows),
+        "crops": len(crop_ids),
+        "crops_outside_dictionary": crops_outside,
+        "crop_links": len(crop_links),
+        "pests": len(pest_ids),
+        "pests_outside_dictionary": pests_outside,
+        "pest_links": len(pest_links),
     }

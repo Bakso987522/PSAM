@@ -10,8 +10,11 @@ REQUIRED_COLUMNS = {
               "TerminDopuszczenia", "etykieta", "Op", "BazowySor", "Rodzaj", "Zawartosc_SBCZ_prosty"},
     "cards": {"id_sor", "Zastosowanie"},
     "substances": {"Nazwa_SBCZ"},
-    "usages": {"id_sor", "dawka", "termin", "grupa", "maloobszarowe", "metody_stosowania", "laczne_stosowanie"},
     "groups": {"grupa", "nazwa_grupy"},
+    "usages": {"id_sor", "uprawa", "agrofag", "dawka", "termin", "grupa", "maloobszarowe",
+               "metody_stosowania", "laczne_stosowanie"},
+    "crops": {"uprawa"},
+    "pests": {"agrofag"},
 }
 AMATEUR_USE = {"amatorskie", "amatorskie / profesjonalne"}
 
@@ -64,3 +67,13 @@ def parse_composition(pattern: re.Pattern, text: str | None) -> list[tuple[str, 
         parts.append((m[1], content, m[3]))
         pos = m.end()
     return parts    
+
+def split_list(text: str | None, names_with_comma: list[str]) -> list[str]:
+    rest = text or ""
+    found = []
+    for name in sorted(names_with_comma, key=len, reverse=True):
+        i = rest.lower().find(name.lower())
+        if i >= 0:
+            found.append(rest[i:i + len(name)])
+            rest = rest[:i] + rest[i + len(name):]
+    return found + [part.strip(" .") for part in rest.split(",") if part.strip(" .")]
