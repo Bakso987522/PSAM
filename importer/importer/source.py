@@ -21,6 +21,8 @@ def latest_version(client: httpx.Client, dataset_id: str) -> tuple[date, dict[st
                       params={"sort": "-data_date", "per_page": 50})
     resp.raise_for_status()
     resources = [r["attributes"] for r in resp.json()["data"]]
+    if not resources:
+        raise RuntimeError(f"dataset {dataset_id} has no resources")
     published = resources[0]["data_date"]
     urls = {}
     for attrs in resources:

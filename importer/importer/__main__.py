@@ -21,8 +21,12 @@ def log(conn: psycopg.Connection, published, status: str, message: str) -> None:
 
 def run(force: bool) -> None:
     dataset_id = os.environ["DANE_GOV_DATASET_ID"]
-    with psycopg.connect(os.environ["DATABASE_URL"], autocommit=True) as conn:
-        with httpx.Client(timeout=60) as client:
+    with (
+        psycopg.connect(os.environ["DATABASE_URL"], autocommit=True) as conn,
+        httpx.Client(timeout=60) as client,
+    ):
+        published = None
+        try:
             published, urls = source.latest_version(client, dataset_id)
             print(f"import: latest version {published}")
             if not force and published == last_version(conn):
@@ -30,8 +34,6 @@ def run(force: bool) -> None:
                 print(f"import: version {published} already loaded, skipping (use --force to reload)")
                 return
             files = source.download_all(client, urls)
-
-        try:
             stats = loader.load(conn, files, published, force)
         except Exception as e:
             log(conn, published, "failed", f"{type(e).__name__}: {e}")
