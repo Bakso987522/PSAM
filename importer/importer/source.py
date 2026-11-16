@@ -9,6 +9,8 @@ FILES = {
     "rejestr podstawowy": "basic",
     "rejestr kart": "cards",
     "słownik substancji aktywnych": "substances",
+    "rejestr zastosowań": "usages",
+    "słownik grup stosowania": "groups",
 }
 
 

@@ -15,6 +15,10 @@ UPSERT_PRODUCT = """
         for_amateurs = EXCLUDED.for_amateurs, packaging = EXCLUDED.packaging,
         label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name
 """
+INSERT_USAGE = """
+    INSERT INTO usage (product_id, group_id, dose, timing, method, combined_use, minor_use)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+"""
 
 def dictionary(cur: psycopg.Cursor, table: str, names) -> dict[str, int]:
     cur.executemany(
@@ -32,6 +36,8 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
     substances = [r["Nazwa_SBCZ"] for r in parsers.read_csv("substances", files["substances"])]
     pattern = parsers.composition_pattern(substances)
+    usages = parsers.read_xlsx("usages", files["usages"])
+    groups = parsers.read_csv("groups", files["groups"])
 
     rows = []
     type_links = set()
@@ -51,6 +57,20 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         for name, content, unit in parsers.parse_composition(pattern, p["Zawartosc_SBCZ_prosty"]):
             composition[(p["id_sor"], parsers.norm(name))] = (content, unit)
 
+    product_ids = {p["id_sor"] for p in basic}
+    usage_rows = []
+    for u in usages:
+        if u["id_sor"] not in product_ids:
+            raise ValueError(f"usage refers to product {u['id_sor']} missing from the basic register")
+        usage_rows.append((
+            u["id_sor"],
+            u["grupa"],
+            u["dawka"],
+            u["termin"],
+            u["metody_stosowania"],
+            u["laczne_stosowanie"],
+            u["maloobszarowe"] == 1,
+        ))
     with conn.transaction(), conn.cursor() as cur:
         cur.executemany(UPSERT_PRODUCT, rows)
 
@@ -71,6 +91,13 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
                 for (product_id, key), (content, unit) in composition.items()
             ],
         )
+        cur.executemany(
+            "INSERT INTO application_group (id, name) VALUES (%s, %s)"
+            " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name",
+            [(int(g["grupa"]), g["nazwa_grupy"]) for g in groups],
+        )
+        cur.execute("DELETE FROM usage")
+        cur.executemany(INSERT_USAGE, usage_rows)
 
     return {
         "products": len(rows),
@@ -79,4 +106,6 @@ def load(conn: psycopg.Connection, files: dict[str, bytes]) -> dict:
         "type_links": len(type_links),
         "substances": len(substance_ids),
         "composition": len(composition),
+        "groups": len(groups),
+        "usages": len(usage_rows),
     }

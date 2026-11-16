@@ -10,6 +10,8 @@ REQUIRED_COLUMNS = {
               "TerminDopuszczenia", "etykieta", "Op", "BazowySor", "Rodzaj", "Zawartosc_SBCZ_prosty"},
     "cards": {"id_sor", "Zastosowanie"},
     "substances": {"Nazwa_SBCZ"},
+    "usages": {"id_sor", "dawka", "termin", "grupa", "maloobszarowe", "metody_stosowania", "laczne_stosowanie"},
+    "groups": {"grupa", "nazwa_grupy"},
 }
 AMATEUR_USE = {"amatorskie", "amatorskie / profesjonalne"}
 
