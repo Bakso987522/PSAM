@@ -17,6 +17,8 @@ const toProductUsage = (usage: UsageApiResponse): ProductUsage => {
         timing: usage.timing,
         method: usage.method,
         preHarvestDays: usage.pre_harvest_days,
+        combinedUse: usage.combined_use,
+        minorUse: usage.minor_use,
     };
 };
 
@@ -36,7 +38,7 @@ const toUsageGroups = (usages: UsageApiResponse[]): ProductUsageGroup[] => {
     }));
 };
 
-const toPackaging = (packaging: string | null) => {
+export const toPackaging = (packaging: string | null) => {
     return (packaging ?? "")
         .split("\n")
         .map((line) => line.trim())
@@ -57,6 +59,7 @@ export const toProductCard = (response: ProductCardApiResponse): ProductCard => 
         forAmateurs: product.for_amateurs,
         packaging: toPackaging(product.packaging),
         labelUrl: product.label_url,
+        labelMatched: product.label_matched,
         removedAt: product.removed_at,
         productTypes: response.product_types,
         substances: response.active_substances,

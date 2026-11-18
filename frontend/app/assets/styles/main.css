@@ -73,4 +73,68 @@
     --radius-card: 12px;
 
     --shadow-card: 0 0 4px rgb(0 0 0 / 0.25);
+
+    --animate-accordion-down: accordion-down 200ms ease-out;
+    --animate-accordion-up: accordion-up 200ms ease-out;
+    --animate-collapsible-down: collapsible-down 200ms ease-out;
+    --animate-collapsible-up: collapsible-up 200ms ease-out;
+
+    @keyframes accordion-down {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--reka-accordion-content-height);
+        }
+    }
+
+    @keyframes collapsible-down {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--reka-collapsible-content-height);
+        }
+    }
+
+    @keyframes collapsible-up {
+        from {
+            height: var(--reka-collapsible-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+
+    @keyframes accordion-up {
+        from {
+            height: var(--reka-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+}
+
+@utility scrollbar-green {
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--color-primary);
+        border-radius: 9999px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 2px solid transparent;
+        border-radius: 9999px;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+        scrollbar-color: #fff var(--color-primary);
+        scrollbar-width: thin;
+    }
 }

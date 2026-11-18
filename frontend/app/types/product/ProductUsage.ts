@@ -5,6 +5,8 @@ export interface ProductUsage {
     timing: string | null;
     method: string | null;
     preHarvestDays: number | null;
+    combinedUse: string | null;
+    minorUse: boolean;
 }
 
 export interface ProductUsageGroup {

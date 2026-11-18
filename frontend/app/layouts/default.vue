@@ -11,7 +11,7 @@ import { LayoutText } from "~/enums/LayoutText";
             </NuxtLink>
         </header>
         <main
-            class="mx-auto w-full max-w-4xl flex flex-1 flex-col items-center px-4 pb-10"
+            class="mx-auto flex w-full flex-1 flex-col items-center px-4 pb-10"
         >
             <slot />
         </main>

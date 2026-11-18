@@ -32,6 +32,9 @@ export interface SearchFiltersAppliedApiResponse {
 export interface SearchApiResponse {
     filters_applied: SearchFiltersAppliedApiResponse;
     count: number;
-    total?: number;
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
     results: SearchResultApiResponse[];
 }

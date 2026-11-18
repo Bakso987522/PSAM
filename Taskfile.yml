@@ -23,7 +23,7 @@ tasks:
 
     import:
         desc: "Runs the data import once"
-        cmd: docker compose run --rm importer python -m importer run
+        cmd: docker compose run --rm importer python -m importer run {{.CLI_ARGS}}
 
     db:psql:
         desc: "Opens psql in the database container"

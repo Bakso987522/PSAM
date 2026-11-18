@@ -17,6 +17,7 @@ import { fetchSearch } from "~/services/api";
 import type { SearchApiRequest } from "~/types/api/search";
 import type { ActiveFilter, ListFilterKind } from "~/types/search/ActiveFilter";
 import type { SearchCriteria } from "~/types/search/SearchCriteria";
+import type { SearchQuery } from "~/types/search/SearchQuery";
 import { UserRole } from "~/enums/UserRole";
 
 const LIST_FILTER_KINDS: ListFilterKind[] = ["crops", "pests", "productTypes"];
@@ -79,19 +80,15 @@ const searchProducts = async (criteria: SearchCriteria) => {
     const params = toSearchApiRequest(criteria);
     const response = await fetchSearch(params);
 
-    const hasResults = (result: typeof response) => {
-        return (result.total ?? result.count) > 0;
-    };
-
-    if (criteria.role !== UserRole.Amateur || hasResults(response)) {
-        return toSearchResponse(response, criteria);
+    if (criteria.role !== UserRole.Amateur || response.total > 0) {
+        return toSearchResponse(response);
     }
 
     const professional = await fetchSearch({
         ...params,
         role: UserRole.Professional,
     });
-    return toSearchResponse(response, criteria, hasResults(professional));
+    return toSearchResponse(response, professional.total > 0);
 };
 
 const toLocationQuery = (criteria: SearchCriteria): LocationQueryRaw => {
@@ -178,6 +175,26 @@ export function useSearchResults() {
         await replaceCriteria(nextCriteria);
     };
 
+    const applyFilters = async (query: SearchQuery) => {
+        const merge = (current: string[], added: string[] = []) => {
+            const known = new Set(current.map((value) => value.toLocaleLowerCase("pl-PL")));
+            return [
+                ...current,
+                ...added.filter((value) => !known.has(value.toLocaleLowerCase("pl-PL"))),
+            ];
+        };
+
+        await replaceCriteria({
+            ...criteria.value,
+            q: query.q ?? criteria.value.q,
+            crops: merge(criteria.value.crops, query.crops),
+            pests: merge(criteria.value.pests, query.pests),
+            productTypes: merge(criteria.value.productTypes, query.productTypes),
+            role: query.role,
+            page: DEFAULT_PAGE,
+        });
+    };
+
     const clearFilters = async () => {
         await replaceCriteria({
             q: criteria.value.q,
@@ -230,6 +247,7 @@ export function useSearchResults() {
         error,
         activeFilters,
         removeFilter,
+        applyFilters,
         clearFilters,
         setRole,
         setPage,

@@ -46,36 +46,15 @@ const isRemoved = (
     return result.removed_at !== null;
 };
 
-interface Pagination {
-    page: number;
-    pageCount: number;
-}
-
 export const toSearchResponse = (
     response: SearchApiResponse,
-    { page, pageCount }: Pagination,
     hasProfessionalOnlyResults = false,
 ): SearchResponse => {
-    const results = response.results
-        .filter((result) => !isRemoved(result))
-        .map(toSearchResult);
-
-    if (response.total !== undefined) {
-        return {
-            total: response.total,
-            items: results,
-            removed: response.results.filter(isRemoved).map(toRemovedProduct),
-            hasProfessionalOnlyResults,
-        };
-    }
-
-    // TODO: usunąć po wdrożeniu paginacji w API — do tego czasu API zwraca
-    // wszystkie (maks. 50) wyniki naraz, więc stronicujemy je lokalnie.
-    const start = (page - 1) * pageCount;
-
     return {
-        total: results.length,
-        items: results.slice(start, start + pageCount),
+        total: response.total,
+        items: response.results
+            .filter((result) => !isRemoved(result))
+            .map(toSearchResult),
         removed: response.results.filter(isRemoved).map(toRemovedProduct),
         hasProfessionalOnlyResults,
     };

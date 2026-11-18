@@ -7,9 +7,11 @@ interface ProductActionsProps {
     idSor: string;
     name: string;
     labelUrl: string | null;
+    labelMatched: boolean;
 }
 
-const { idSor, name, labelUrl } = defineProps<ProductActionsProps>();
+const { idSor, name, labelUrl, labelMatched } =
+    defineProps<ProductActionsProps>();
 
 const COPIED_RESET_MS = 2000;
 
@@ -41,14 +43,21 @@ const share = async () => {
 
 <template>
     <div class="flex flex-wrap gap-2 sm:gap-3">
+        <AppButton
+            v-if="labelUrl && labelMatched"
+            class="flex-1 sm:flex-none"
+            :to="ROUTES.label(idSor)"
+        >
+            {{ ProductText.Label }}
+        </AppButton>
         <a
-            v-if="labelUrl"
+            v-else-if="labelUrl"
             :href="labelUrl"
             target="_blank"
             rel="noopener"
             class="inline-flex h-10 flex-1 items-center sm:flex-none justify-center rounded-control border border-primary bg-primary px-5 text-white transition-colors hover:bg-primary-dark"
         >
-            {{ ProductText.Label }}
+            {{ ProductText.LabelExternal }}
         </a>
         <AppButton
             variant="outline"

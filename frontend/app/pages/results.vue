@@ -2,6 +2,7 @@
 import { ArrowLeft, RotateCcw } from "@lucide/vue";
 import Container from "~/components/layout/Container.vue";
 import ActiveFilters from "~/components/results/ActiveFilters.vue";
+import AddFilters from "~/components/results/AddFilters.vue";
 import EmptyResults from "~/components/results/EmptyResults.vue";
 import PageSizeSelect from "~/components/results/PageSizeSelect.vue";
 import RemovedProducts from "~/components/results/RemovedProducts.vue";
@@ -15,12 +16,15 @@ import { ProfessionalOnlyMessage } from "~/enums/ProfessionalOnlyMessage";
 import { ResultsText } from "~/enums/ResultsText";
 import { UserRole } from "~/enums/UserRole";
 import { useLastResultsPath } from "~/hooks/useLastResultsPath";
+import { useUserRole } from "~/hooks/useUserRole";
 import { useSearchResults } from "~/hooks/useSearchResults";
+import type { SearchQuery } from "~/types/search/SearchQuery";
 import type { BreadcrumbItem } from "~/types/ui/BreadcrumbItem";
 
 const router = useRouter();
 const route = useRoute();
 const { rememberResultsPath } = useLastResultsPath();
+const { role: userRole } = useUserRole();
 
 watch(() => route.fullPath, rememberResultsPath, { immediate: true });
 const {
@@ -30,11 +34,17 @@ const {
     error,
     activeFilters,
     removeFilter,
+    applyFilters,
     clearFilters,
     setRole,
     setPage,
     setPageCount,
 } = useSearchResults();
+
+const applyNewFilters = async (query: SearchQuery) => {
+    userRole.value = query.role;
+    await applyFilters(query);
+};
 
 const page = computed({
     get: () => criteria.value.page,
@@ -94,6 +104,11 @@ useHead({ title: PageTitle.Results });
             :filters="activeFilters"
             @remove="removeFilter"
             @clear="clearFilters"
+        />
+
+        <AddFilters
+            :role="criteria.role ?? userRole"
+            @apply="applyNewFilters"
         />
 
         <hr class="border-line" />

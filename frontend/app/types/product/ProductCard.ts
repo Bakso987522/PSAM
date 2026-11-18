@@ -12,6 +12,7 @@ export interface ProductCard {
     forAmateurs: boolean;
     packaging: string[];
     labelUrl: string | null;
+    labelMatched: boolean;
     removedAt: string | null;
     productTypes: string[];
     substances: ProductSubstance[];

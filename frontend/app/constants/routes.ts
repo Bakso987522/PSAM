@@ -4,4 +4,5 @@ export const ROUTES = {
     product: (id: string) => `/products/${encodeURIComponent(id)}`,
     alternatives: (id: string) =>
         `/products/${encodeURIComponent(id)}/alternatives`,
+    label: (id: string) => `/products/${encodeURIComponent(id)}/label`,
 } as const;

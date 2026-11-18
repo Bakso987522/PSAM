@@ -47,7 +47,7 @@ useHead({
 </script>
 
 <template>
-    <Container class="mx-auto w-full max-w-220 gap-6 py-8 sm:px-10">
+    <Container class="mx-auto w-full max-w-220 gap-6 py-8 sm:px-10 lg:max-w-264">
         <div class="flex items-center justify-between gap-4">
             <AppBreadcrumbs :items="breadcrumbs" />
             <div class="flex shrink-0 gap-2">
@@ -94,16 +94,29 @@ useHead({
                 {{ ProductText.Removed }}: {{ formatDate(product.removedAt) }}
             </p>
 
-            <ProductDetails :product="product" />
-            <ProductActions
-                :id-sor="product.idSor"
-                :name="product.name"
-                :label-url="product.labelUrl"
-            />
+            <div class="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:gap-8">
+                <div class="flex flex-col gap-6">
+                    <ProductDetails :product="product" />
+                    <ProductActions
+                        :id-sor="product.idSor"
+                        :name="product.name"
+                        :label-url="product.labelUrl"
+                        :label-matched="product.labelMatched"
+                    />
+                </div>
 
-            <hr class="border-line" />
+                <hr class="border-line lg:hidden" />
 
-            <UsageList :groups="product.usageGroups" :label-url="product.labelUrl" />
+                <div class="lg:relative lg:min-h-80">
+                    <UsageList
+                        class="lg:absolute lg:inset-0"
+                        :id-sor="product.idSor"
+                        :groups="product.usageGroups"
+                        :label-url="product.labelUrl"
+                        :label-matched="product.labelMatched"
+                    />
+                </div>
+            </div>
 
             <LegalNotice />
         </template>

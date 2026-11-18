@@ -1,0 +1,2 @@
+export const ALTERNATIVES_PAGE_SIZE = 10;
+export const ALTERNATIVES_API_LIMIT = 20;
