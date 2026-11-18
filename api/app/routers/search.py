@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Query
 
 from app.constants import DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 from app.db import get_db
-from app.search_filters import build_filters
-from app.sql_helpers import similarity_rank
+from app.search_filters import build_filters, has_strict_matches, text_order
+from app.sql_helpers import SearchTerm
 
 router = APIRouter(tags=["search"])
 
@@ -23,7 +23,7 @@ PAGE_SQL = """
     FROM product p
     WHERE {where}
     ORDER BY {order}
-    LIMIT %s OFFSET %s
+    LIMIT %(limit)s OFFSET %(offset)s
 """
 
 
@@ -45,8 +45,21 @@ def search_products(
     """
     size = page_count or page_size
 
+    # Wyszukiwanie tekstu w dwóch krokach: najpierw dopasowanie dokładne (zawieranie),
+    # a literówki (fuzzy) tylko wtedy, gdy wpisany tekst nie pasuje do żadnego
+    # środka ani substancji w rejestrze. Dzięki temu poprawnie wpisana nazwa
+    # nie "zbiera" przypadkowych podobnych wyników.
+    term = SearchTerm.from_raw(db, q)
+    mode = "fuzzy" if term and not has_strict_matches(db, term) else "strict"
+
     where_sql, params = build_filters(
-        db, q=q, crops=crops, pests=pests, product_types=product_types, role=role
+        db,
+        term=term,
+        crops=crops,
+        pests=pests,
+        product_types=product_types,
+        role=role,
+        mode=mode,
     )
 
     total = db.execute(
@@ -55,16 +68,14 @@ def search_products(
 
     # Stabilna kolejność (id_sor jako ostatni klucz), inaczej strony mogłyby
     # się powtarzać lub gubić środki o tej samej nazwie.
-    if q:
-        order_sql = f"{similarity_rank('p.name')} DESC, p.name, p.id_sor"
-        order_params = [q]
+    if term:
+        order_sql = f"{text_order(mode)}, p.name, p.id_sor"
     else:
         order_sql = "p.name, p.id_sor"
-        order_params = []
 
     results = db.execute(
         PAGE_SQL.format(where=where_sql, order=order_sql),
-        params + order_params + [size, (page - 1) * size],
+        {**params, "limit": size, "offset": (page - 1) * size},
     ).fetchall()
 
     return {
@@ -75,6 +86,9 @@ def search_products(
             "productTypes": product_types or [],
             "role": role,
         },
+        # True = wpisany tekst nie pasował dokładnie do żadnej nazwy, więc pokazano
+        # wyniki podobne (z poprawką literówek) - frontend może to zakomunikować.
+        "fuzzy": mode == "fuzzy",
         "count": len(results),  # ile środków jest na tej stronie
         "total": total,  # ile środków pasuje łącznie (wszystkie strony)
         "page": page,

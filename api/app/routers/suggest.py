@@ -2,40 +2,38 @@
 from fastapi import APIRouter, Depends, Query
 
 from app.db import get_db
-from app.sql_helpers import fuzzy_match, fuzzy_params, similarity_rank
+from app.sql_helpers import SearchTerm, find_by_name, find_by_name_with_fallback
 
 router = APIRouter(prefix="/suggest", tags=["suggest"])
 
 
 def suggest_from_table(db, table: str, kind: str, q: str, limit: int = 10):
-    rows = db.execute(
-        f"""
-        SELECT id, name FROM {table}
-        WHERE {fuzzy_match('name')}
-        ORDER BY {similarity_rank('name')} DESC, name
-        LIMIT {int(limit)}
-        """,
-        fuzzy_params(q) + [q],
-    ).fetchall()
+    term = SearchTerm.from_raw(db, q)
+    if not term:
+        return []
+    rows = find_by_name_with_fallback(db, table, term, limit=limit)
     return [{"id": r["id"], "kind": kind, "label": r["name"]} for r in rows]
 
 
 @router.get("/names")
 def suggest_names(q: str = Query(..., min_length=2), db=Depends(get_db)):
     """Nazwy handlowe środków i substancje czynne."""
-    products = db.execute(
-        f"""
-        SELECT id_sor AS id, name FROM product
-        WHERE {fuzzy_match('name')}
-        ORDER BY {similarity_rank('name')} DESC, name
-        LIMIT 8
-        """,
-        fuzzy_params(q) + [q],
-    ).fetchall()
-    substances = suggest_from_table(db, "active_substance", "substance", q, limit=5)
+    term = SearchTerm.from_raw(db, q)
+    if not term:
+        return []
+
+    # Tryb (dokładny / z literówkami) wybieramy raz dla obu list razem - inaczej
+    # poprawnie wpisana nazwa środka dostawałaby "podobne" substancje czynne.
+    products, substances = [], []
+    for mode in ("strict", "fuzzy"):
+        products = find_by_name(db, "product", term, mode, id_col="id_sor", limit=8)
+        substances = find_by_name(db, "active_substance", term, mode, limit=5)
+        if products or substances:
+            break
+
     return [
         {"id": p["id"], "kind": "product", "label": p["name"]} for p in products
-    ] + substances
+    ] + [{"id": s["id"], "kind": "substance", "label": s["name"]} for s in substances]
 
 
 @router.get("/crops")
