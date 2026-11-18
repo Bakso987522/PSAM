@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   modules: ['reka-ui/nuxt'],
   runtimeConfig: {
     apiUrl: '',
+    public: {
+      daneGovDatasetId: '',
+    },
   },
   vite: {
     plugins: [tailwindcss()]

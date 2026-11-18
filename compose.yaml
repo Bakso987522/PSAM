@@ -28,6 +28,7 @@ services:
     build: ./frontend
     environment:
       NUXT_API_URL: http://api:8000
+      NUXT_PUBLIC_DANE_GOV_DATASET_ID: ${DANE_GOV_DATASET_ID}
     depends_on:
       - api
 
