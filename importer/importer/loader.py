@@ -7,8 +7,9 @@ MIN_SIZE_RATIO = 0.8
 
 UPSERT_PRODUCT = """
     INSERT INTO product (id_sor, name, producer, permit_number, permit_valid_until,
-        sale_allowed_until, use_allowed_until, for_amateurs, packaging, label_url, base_product_name)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        sale_allowed_until, use_allowed_until, for_amateurs, packaging, label_url,
+        label_matched, base_product_name)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (id_sor) DO UPDATE SET
         name = EXCLUDED.name, producer = EXCLUDED.producer,
         permit_number = EXCLUDED.permit_number,
@@ -16,8 +17,10 @@ UPSERT_PRODUCT = """
         sale_allowed_until = EXCLUDED.sale_allowed_until,
         use_allowed_until = EXCLUDED.use_allowed_until,
         for_amateurs = EXCLUDED.for_amateurs, packaging = EXCLUDED.packaging,
-        label_url = EXCLUDED.label_url, base_product_name = EXCLUDED.base_product_name,
-        removed_at =NULL
+        label_url = EXCLUDED.label_url,
+        label_matched = EXCLUDED.label_matched,
+        base_product_name = EXCLUDED.base_product_name,
+        removed_at = NULL
 """
 
 MARK_REMOVED = """
@@ -63,7 +66,7 @@ def check_size(cur: psycopg.Cursor, products: int, usages: int) -> None:
             f"{current_products} and {current_usages}; use --force if this is expected"
         )
 
-def load(conn: psycopg.Connection, files: dict[str, bytes], published: date, force: bool = False) -> dict:
+def load(conn: psycopg.Connection, files: dict[str, bytes], published: date, label_urls: dict[str, str], force: bool = False) -> dict:
     basic = parsers.read_xlsx("basic", files["basic"])
     cards = {r["id_sor"]: r for r in parsers.read_csv("cards", files["cards"])}
     substances = [r["Nazwa_SBCZ"] for r in parsers.read_csv("substances", files["substances"])]
@@ -80,10 +83,24 @@ def load(conn: psycopg.Connection, files: dict[str, bytes], published: date, for
         card = cards.get(p["id_sor"])
         if card is None:
             raise ValueError(f"product {p['id_sor']} ({p['nazwa']}) is missing from the cards register")
-        rows.append((p["id_sor"], p["nazwa"], p["producent_prosty"], p["NrZezw"], p["TerminZezw"],
-                     p["TerminDopSprzedazy"], p["TerminDopuszczenia"],
-                     card["Zastosowanie"] in parsers.AMATEUR_USE, p["Op"], p["etykieta"],
-                     p["BazowySor"]))
+        label = label_urls.get(parsers.norm(p["nazwa"]))
+        if label is None and (p["etykieta"] or "").lower().endswith(".pdf"):
+            label = p["etykieta"]
+
+        rows.append((
+            p["id_sor"],
+            p["nazwa"],
+            p["producent_prosty"],
+            p["NrZezw"],
+            p["TerminZezw"],
+            p["TerminDopSprzedazy"],
+            p["TerminDopuszczenia"],
+            card["Zastosowanie"] in parsers.AMATEUR_USE,
+            p["Op"],
+            label or p["etykieta"],
+            label is not None,
+            p["BazowySor"],
+        ))
         # Rodzaj can be multiple: "Akarycyd, Insektycyd"
         for name in (p["Rodzaj"] or "").split(","):
             if name.strip():
@@ -197,4 +214,5 @@ def load(conn: psycopg.Connection, files: dict[str, bytes], published: date, for
         "pest_links": len(pest_links),
         "pre_harvest": sum(row[7] is not None for row in usage_rows),
         "removed": removed,
+        "labels_matched": sum(r[10] for r in rows),
     }
