@@ -44,7 +44,7 @@ def max_typos(length: int) -> int:
 class SearchTerm:
     """Wpisany przez użytkownika tekst, już znormalizowany (raz, a nie dla każdego wiersza)."""
 
-    text: str  # małe litery, bez polskich znaków
+    text: str 
     max_dist: int
 
     @classmethod
@@ -68,8 +68,6 @@ class SearchTerm:
         return {"nq": self.text, "nlen": len(self.text), "maxd": self.max_dist}
 
 
-# --- tryb strict -----------------------------------------------------------
-
 
 def strict_match(column: str) -> str:
     """Warunek: kolumna zawiera wpisany tekst. (strpos, a nie LIKE - znaki % i _ nie są specjalne)"""
@@ -86,8 +84,6 @@ def strict_rank(column: str) -> str:
         f"ELSE 3 END"
     )
 
-
-# --- tryb fuzzy ------------------------------------------------------------
 
 
 def fuzzy_distance(column: str) -> str:
@@ -113,8 +109,6 @@ def fuzzy_match(column: str) -> str:
     """Warunek: kolumna jest podobna do wpisanego tekstu (najwyżej maxd pomyłek)."""
     return f"{fuzzy_distance(column)} <= %(maxd)s::int"
 
-
-# --- wspólne ---------------------------------------------------------------
 
 
 def text_match(mode: Mode, column: str) -> str:

@@ -45,10 +45,6 @@ def search_products(
     """
     size = page_count or page_size
 
-    # Wyszukiwanie tekstu w dwóch krokach: najpierw dopasowanie dokładne (zawieranie),
-    # a literówki (fuzzy) tylko wtedy, gdy wpisany tekst nie pasuje do żadnego
-    # środka ani substancji w rejestrze. Dzięki temu poprawnie wpisana nazwa
-    # nie "zbiera" przypadkowych podobnych wyników.
     term = SearchTerm.from_raw(db, q)
     mode = "fuzzy" if term and not has_strict_matches(db, term) else "strict"
 
@@ -86,8 +82,7 @@ def search_products(
             "productTypes": product_types or [],
             "role": role,
         },
-        # True = wpisany tekst nie pasował dokładnie do żadnej nazwy, więc pokazano
-        # wyniki podobne (z poprawką literówek) - frontend może to zakomunikować.
+        
         "fuzzy": mode == "fuzzy",
         "count": len(results),  # ile środków jest na tej stronie
         "total": total,  # ile środków pasuje łącznie (wszystkie strony)
