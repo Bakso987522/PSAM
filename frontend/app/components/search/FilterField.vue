@@ -52,7 +52,7 @@ const removeItem = (item: Suggestion) => {
             :reset-search-term-on-blur="false"
         >
             <ComboboxAnchor
-                class="flex h-10 items-center gap-2 rounded-field border border-field bg-white pr-3 pl-4 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-soft"
+                class="flex h-12 items-center gap-2 rounded-field border border-field bg-white pr-3 pl-4 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-soft"
             >
                 <ComboboxInput
                     :id="inputId"

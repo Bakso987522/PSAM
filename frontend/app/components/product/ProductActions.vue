@@ -50,15 +50,14 @@ const share = async () => {
         >
             {{ ProductText.Label }}
         </AppButton>
-        <a
+        <AppButton
             v-else-if="labelUrl"
+            class="flex-1 sm:flex-none"
             :href="labelUrl"
-            target="_blank"
-            rel="noopener"
-            class="inline-flex h-10 flex-1 items-center sm:flex-none justify-center rounded-control border border-primary bg-primary px-5 text-white transition-colors hover:bg-primary-dark"
+            external
         >
             {{ ProductText.LabelExternal }}
-        </a>
+        </AppButton>
         <AppButton
             variant="outline"
             class="flex-1 sm:flex-none"

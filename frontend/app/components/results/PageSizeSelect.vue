@@ -17,7 +17,7 @@ const selectId = useId();
             <select
                 :id="selectId"
                 v-model.number="pageCount"
-                class="h-10 cursor-pointer appearance-none rounded-control border border-primary bg-white pr-10 pl-4 text-primary-dark transition-colors hover:bg-primary-soft"
+                class="h-12 cursor-pointer appearance-none rounded-control border border-primary bg-white pr-10 pl-4 text-primary-dark transition-colors hover:bg-primary-soft"
             >
                 <option v-for="option in PAGE_SIZE_OPTIONS" :key="option" :value="option">
                     {{ option }}

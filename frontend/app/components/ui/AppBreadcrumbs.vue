@@ -21,7 +21,7 @@ const { items } = defineProps<AppBreadcrumbsProps>();
                 <NuxtLink
                     v-if="item.to"
                     :to="item.to"
-                    class="text-primary underline underline-offset-4 hover:text-primary-dark"
+                    class="inline-flex touch-target items-center text-primary underline underline-offset-4 hover:text-primary-dark"
                 >
                     {{ item.label }}
                 </NuxtLink>

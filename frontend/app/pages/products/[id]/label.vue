@@ -91,7 +91,9 @@ useHead({
             </h1>
 
             <template v-if="hasLabel">
-                <div class="overflow-hidden rounded-field border border-line bg-neutral-100">
+                <p class="text-secondary sm:hidden">{{ ProductText.LabelMobileHint }}</p>
+
+                <div class="hidden overflow-hidden rounded-field border border-line bg-neutral-100 sm:block">
                     <iframe
                         :src="API_ENDPOINTS.label(product.idSor, product.name)"
                         :title="`${ProductText.LabelFrame}: ${product.name}`"
@@ -100,13 +102,21 @@ useHead({
                 </div>
 
                 <div class="flex flex-wrap gap-2 sm:gap-3">
-                    <a
+                    <AppButton
+                        class="flex-1 sm:flex-none"
+                        :href="API_ENDPOINTS.label(product.idSor, product.name)"
+                        external
+                    >
+                        {{ ProductText.LabelOpen }}
+                    </AppButton>
+                    <AppButton
+                        variant="outline"
+                        class="flex-1 sm:flex-none"
                         :href="API_ENDPOINTS.label(product.idSor, product.name, true)"
                         download
-                        class="inline-flex h-10 flex-1 items-center justify-center rounded-control border border-primary bg-primary px-5 text-white transition-colors hover:bg-primary-dark sm:flex-none"
                     >
                         {{ ProductText.Download }}
-                    </a>
+                    </AppButton>
                     <AppButton
                         variant="outline"
                         class="flex-1 sm:flex-none"
@@ -123,15 +133,9 @@ useHead({
                 :description="ProductText.LabelUnavailableDescription"
             >
                 <div class="flex flex-wrap justify-center gap-2">
-                    <a
-                        v-if="product.labelUrl"
-                        :href="product.labelUrl"
-                        target="_blank"
-                        rel="noopener"
-                        class="inline-flex h-10 items-center justify-center rounded-control border border-primary bg-primary px-5 text-white transition-colors hover:bg-primary-dark"
-                    >
+                    <AppButton v-if="product.labelUrl" :href="product.labelUrl" external>
                         {{ ProductText.LabelExternal }}
-                    </a>
+                    </AppButton>
                     <AppButton variant="outline" :to="ROUTES.product(product.idSor)">
                         {{ ProductText.BackToCard }}
                     </AppButton>

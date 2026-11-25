@@ -104,7 +104,7 @@ const apply = () => {
         class="rounded-field border border-line bg-white data-[state=open]:border-primary"
     >
         <CollapsibleTrigger
-            class="group flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 font-bold text-primary hover:bg-primary-tint"
+            class="group flex min-h-12 w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 font-bold text-primary hover:bg-primary-tint"
         >
             <span class="flex items-center gap-2">
                 <Plus class="size-5" aria-hidden="true" />

@@ -24,5 +24,5 @@ export enum ResultsText {
     RemovedHeading = "Środki usunięte z rejestru",
     Removed = "usunięty",
     Substances = "Substancje czynne:",
-    User = "Użytkownik:",
+    User = "Rodzaj użytkownika:",
 }

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import Container from "~/components/layout/Container.vue";
+import DataVersion from "~/components/layout/DataVersion.vue";
 import RecentProducts from "~/components/search/RecentProducts.vue";
 import SearchForm from "~/components/search/SearchForm.vue";
 import { PageTitle } from "~/enums/PageTitle";
-import { SearchText } from "~/enums/SearchText";
-import { useDataVersion } from "~/hooks/useDataVersion";
 import { useRecentProducts } from "~/hooks/useRecentProducts";
 
-const { publishedAt } = useDataVersion();
 const { recentProducts } = useRecentProducts();
 
 const hasRecent = computed(() => recentProducts.value.length > 0);
@@ -27,8 +25,6 @@ useHead({ title: PageTitle.Home });
             <SearchForm />
             <RecentProducts />
         </div>
-        <p v-if="publishedAt" class="text-center text-sm text-muted">
-            {{ SearchText.DataVersion }} {{ publishedAt }}
-        </p>
+        <DataVersion class="text-center text-sm" />
     </Container>
 </template>

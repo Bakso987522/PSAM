@@ -49,17 +49,17 @@
     --text-8xl: calc(var(--font-size-root) * 6);
     --text-9xl: calc(var(--font-size-root) * 8);
 
-    --color-primary: #397437;
-    --color-primary-dark: #265c2b;
-    --color-primary-darker: #1e491f;
+    --color-primary: #245226;
+    --color-primary-dark: #1e491f;
+    --color-primary-darker: #173b18;
     --color-primary-soft: #e3eee0;
     --color-primary-tint: #e8f1e6;
     --color-primary-tint-2: #ddedda;
 
     --color-field: #cbcbcb;
     --color-line: #d7d7d7;
-    --color-muted: #898989;
-    --color-secondary: #646464;
+    --color-muted: #4d4d4d;
+    --color-secondary: #474747;
 
     --color-warn-bg: #ffe9bf;
     --color-warn-fg: #6b3a00;
@@ -137,4 +137,9 @@
         scrollbar-color: #fff var(--color-primary);
         scrollbar-width: thin;
     }
+}
+
+@utility touch-target {
+    min-height: 3rem;
+    min-width: 3rem;
 }

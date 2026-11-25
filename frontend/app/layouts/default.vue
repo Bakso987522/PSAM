@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import Logo from "~/components/Logo.vue";
 import { DATA_SOURCE_URL } from "~/constants/dataSource";
+import { ROUTES } from "~/constants/routes";
 import { LayoutText } from "~/enums/LayoutText";
+
+const route = useRoute();
+const isHome = computed(() => route.path === ROUTES.home);
 
 const { public: publicConfig } = useRuntimeConfig();
 const dataSourceUrl = DATA_SOURCE_URL(String(publicConfig.daneGovDatasetId ?? ""));
@@ -9,9 +13,12 @@ const dataSourceUrl = DATA_SOURCE_URL(String(publicConfig.daneGovDatasetId ?? ""
 
 <template>
     <div class="flex min-h-dvh flex-col text-black">
-        <header class="flex justify-center px-4 pt-10 pb-8">
-            <NuxtLink to="/" class="text-4xl font-bold text-primary">
-                <Logo />
+        <header
+            class="flex px-4"
+            :class="isHome ? 'justify-center pt-10 pb-8' : 'justify-start pt-4 pb-2 sm:px-6'"
+        >
+            <NuxtLink to="/" :aria-label="LayoutText.HomeLink" class="text-primary">
+                <Logo :class="isHome ? 'h-auto w-59' : 'h-auto w-20 sm:w-24'" />
             </NuxtLink>
         </header>
         <main
@@ -26,7 +33,7 @@ const dataSourceUrl = DATA_SOURCE_URL(String(publicConfig.daneGovDatasetId ?? ""
                     :href="dataSourceUrl"
                     target="_blank"
                     rel="noopener"
-                    class="underline underline-offset-4 hover:text-primary-soft"
+                    class="inline-flex touch-target items-center underline underline-offset-4 hover:text-primary-soft"
                 >
                     {{ LayoutText.DataSourceLink }}</a>.
             </p>

@@ -87,7 +87,7 @@ const labelLink = computed(() => {
                     >
                         <AccordionHeader as="div">
                             <AccordionTrigger
-                                class="group flex w-full cursor-pointer items-center justify-between gap-3 px-5 py-3 text-left outline-none hover:bg-primary-tint"
+                                class="group flex min-h-12 w-full cursor-pointer items-center justify-between gap-3 px-5 py-3 text-left outline-none hover:bg-primary-tint"
                             >
                                 <span class="flex flex-wrap items-center gap-2 font-bold">
                                     {{ getTitle(usage) }}
@@ -127,7 +127,7 @@ const labelLink = computed(() => {
                                         :external="labelLink.external"
                                         :target="labelLink.external ? '_blank' : undefined"
                                         :rel="labelLink.external ? 'noopener' : undefined"
-                                        class="text-primary underline underline-offset-4 hover:text-primary-dark"
+                                        class="inline-flex touch-target items-center text-primary underline underline-offset-4 hover:text-primary-dark"
                                     >
                                         {{ ProductText.LabelDetails }}
                                     </NuxtLink>

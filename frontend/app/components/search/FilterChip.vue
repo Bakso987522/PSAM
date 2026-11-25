@@ -13,15 +13,16 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <span
-        class="inline-flex h-9.5 items-center gap-3 rounded-control border border-primary bg-primary-soft pr-2 pl-4 text-primary-dark"
+    <button
+        type="button"
+        :aria-label="`${LayoutText.RemoveChip} ${label}`"
+        class="group inline-flex h-12 cursor-pointer items-center gap-3 rounded-control border border-primary bg-primary-soft pr-3 pl-4 text-primary-dark transition-colors hover:bg-primary-tint-2"
+        @click="emit('remove')"
     >
         <span>{{ label }}</span>
-        <button
-            type="button"
-            :aria-label="`${LayoutText.RemoveChip} ${label}`"
-            class="flex size-6 items-center justify-center rounded-badge transition-colors hover:bg-white"
-            @click="emit('remove')"
+        <span
+            class="flex size-6 items-center justify-center rounded-badge transition-colors group-hover:bg-white"
+            aria-hidden="true"
         >
             <svg
                 viewBox="0 0 10 10"
@@ -29,10 +30,9 @@ const emit = defineEmits<{
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
-                aria-hidden="true"
             >
                 <path d="M0 0L10 10M10 0L0 10" />
             </svg>
-        </button>
-    </span>
+        </span>
+    </button>
 </template>

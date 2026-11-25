@@ -20,7 +20,7 @@ const emit = defineEmits<{
     <template v-if="filters.length > 0">
         <details class="group rounded-field border border-line sm:hidden">
             <summary
-                class="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-bold [&::-webkit-details-marker]:hidden"
+                class="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 py-3 font-bold [&::-webkit-details-marker]:hidden"
             >
                 <span>{{ ResultsText.Filters }} ({{ filters.length }})</span>
                 <svg
@@ -61,7 +61,7 @@ const emit = defineEmits<{
             </ul>
             <button
                 type="button"
-                class="text-primary underline underline-offset-4 hover:text-primary-dark"
+                class="inline-flex touch-target items-center text-primary underline underline-offset-4 hover:text-primary-dark"
                 @click="emit('clear')"
             >
                 {{ ResultsText.ClearFilters }}

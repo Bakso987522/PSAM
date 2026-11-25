@@ -22,7 +22,7 @@ const labelId = useId();
                 v-for="option in ROLE_OPTIONS"
                 :key="option.value"
                 :value="option.value"
-                class="h-10 rounded-control border border-primary bg-white text-primary transition-colors hover:bg-primary-soft data-[state=checked]:bg-primary-soft"
+                class="h-12 rounded-control border border-primary bg-white text-primary transition-colors hover:bg-primary-soft data-[state=checked]:bg-primary-soft"
             >
                 {{ option.label }}
             </RadioGroupItem>

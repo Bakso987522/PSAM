@@ -16,7 +16,7 @@ const { recentProducts, clearRecentProducts } = useRecentProducts();
                 <h2 class="text-lg font-bold">{{ SearchText.RecentProducts }}</h2>
                 <button
                     type="button"
-                    class="text-sm text-primary underline underline-offset-4 hover:text-primary-dark"
+                    class="inline-flex touch-target items-center text-sm text-primary underline underline-offset-4 hover:text-primary-dark"
                     @click="clearRecentProducts"
                 >
                     {{ SearchText.ClearRecentProducts }}

@@ -20,7 +20,7 @@ const { total, itemsPerPage } = defineProps<ResultsPaginationProps>();
 const page = defineModel<number>("page", { required: true });
 
 const buttonClasses =
-    "flex size-10 items-center justify-center rounded-control border border-primary bg-white text-primary transition-colors hover:bg-primary-soft disabled:pointer-events-none disabled:opacity-40";
+    "flex size-12 items-center justify-center rounded-control border border-primary bg-white text-primary transition-colors hover:bg-primary-soft disabled:pointer-events-none disabled:opacity-40";
 </script>
 
 <template>
@@ -53,7 +53,7 @@ const buttonClasses =
                 </PaginationListItem>
                 <PaginationEllipsis
                     v-else
-                    class="flex size-10 items-center justify-center text-secondary"
+                    class="flex size-12 items-center justify-center text-secondary"
                 >
                     &#8230;
                 </PaginationEllipsis>

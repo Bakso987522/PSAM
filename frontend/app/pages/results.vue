@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeft, RotateCcw } from "@lucide/vue";
 import Container from "~/components/layout/Container.vue";
+import DataVersion from "~/components/layout/DataVersion.vue";
 import ActiveFilters from "~/components/results/ActiveFilters.vue";
 import AddFilters from "~/components/results/AddFilters.vue";
 import EmptyResults from "~/components/results/EmptyResults.vue";
@@ -98,7 +99,10 @@ useHead({ title: PageTitle.Results });
             </div>
         </div>
 
-        <h1 class="text-2xl font-bold">{{ ResultsText.Heading }}</h1>
+        <div class="flex flex-col gap-1">
+            <h1 class="text-2xl font-bold">{{ ResultsText.Heading }}</h1>
+            <DataVersion class="text-sm" />
+        </div>
 
         <ActiveFilters
             :filters="activeFilters"
@@ -126,8 +130,9 @@ useHead({ title: PageTitle.Results });
         <template v-else>
             <RemovedProducts :products="response.removed" />
 
-            <template v-if="response.items.length > 0">
+            <template v-if="response.items.length > 0 || response.removed.length > 0">
                 <div
+                    v-if="response.items.length > 0"
                     class="flex flex-col-reverse items-start gap-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                     <p class="text-secondary">
@@ -136,7 +141,7 @@ useHead({ title: PageTitle.Results });
                     <PageSizeSelect v-model="pageCount" />
                 </div>
 
-                <ul class="flex flex-col gap-4">
+                <ul v-if="response.items.length > 0" class="flex flex-col gap-4">
                     <li v-for="result in response.items" :key="result.idSor">
                         <ResultCard :result="result" />
                     </li>
