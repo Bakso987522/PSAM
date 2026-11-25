@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeft, RotateCcw } from "@lucide/vue";
 import Container from "~/components/layout/Container.vue";
+import PageToolbar from "~/components/layout/PageToolbar.vue";
 import DataVersion from "~/components/layout/DataVersion.vue";
 import ActiveFilters from "~/components/results/ActiveFilters.vue";
 import AddFilters from "~/components/results/AddFilters.vue";
@@ -9,7 +10,6 @@ import PageSizeSelect from "~/components/results/PageSizeSelect.vue";
 import RemovedProducts from "~/components/results/RemovedProducts.vue";
 import ResultCard from "~/components/results/ResultCard.vue";
 import ResultsPagination from "~/components/results/ResultsPagination.vue";
-import AppBreadcrumbs from "~/components/ui/AppBreadcrumbs.vue";
 import AppButton from "~/components/ui/AppButton.vue";
 import { ROUTES } from "~/constants/routes";
 import { PageTitle } from "~/enums/PageTitle";
@@ -75,29 +75,26 @@ useHead({ title: PageTitle.Results });
 
 <template>
     <Container class="mx-auto w-full max-w-220 gap-6 py-8 sm:px-10">
-        <div class="flex items-center justify-between gap-4">
-            <AppBreadcrumbs :items="breadcrumbs" />
-            <div class="flex shrink-0 gap-2">
-                <AppButton
-                    variant="outline"
-                    icon-only="mobile"
-                    :aria-label="ResultsText.BackToSearch"
-                    @click="goBack"
-                >
-                    <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ResultsText.BackToSearch }}</span>
-                </AppButton>
-                <AppButton
-                    variant="soft"
-                    icon-only="mobile"
-                    :to="ROUTES.home"
-                    :aria-label="ResultsText.NewSearch"
-                >
-                    <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
-                </AppButton>
-            </div>
-        </div>
+        <PageToolbar :items="breadcrumbs">
+            <AppButton
+                variant="outline"
+                icon-only="mobile"
+                :aria-label="ResultsText.BackToSearch"
+                @click="goBack"
+            >
+                <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ResultsText.BackToSearch }}</span>
+            </AppButton>
+            <AppButton
+                variant="soft"
+                icon-only="mobile"
+                :to="ROUTES.home"
+                :aria-label="ResultsText.NewSearch"
+            >
+                <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
+            </AppButton>
+        </PageToolbar>
 
         <div class="flex flex-col gap-1">
             <h1 class="text-2xl font-bold">{{ ResultsText.Heading }}</h1>

@@ -45,14 +45,12 @@ const share = async () => {
     <div class="flex flex-wrap gap-2 sm:gap-3">
         <AppButton
             v-if="labelUrl && labelMatched"
-            class="flex-1 sm:flex-none"
             :to="ROUTES.label(idSor)"
         >
             {{ ProductText.Label }}
         </AppButton>
         <AppButton
             v-else-if="labelUrl"
-            class="flex-1 sm:flex-none"
             :href="labelUrl"
             external
         >
@@ -60,14 +58,12 @@ const share = async () => {
         </AppButton>
         <AppButton
             variant="outline"
-            class="flex-1 sm:flex-none"
             :to="ROUTES.alternatives(idSor)"
         >
             {{ ProductText.Alternatives }}
         </AppButton>
         <AppButton
             variant="outline"
-            class="flex-1 sm:flex-none"
             aria-live="polite"
             @click="share"
         >

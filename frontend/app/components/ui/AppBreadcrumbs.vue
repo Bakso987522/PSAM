@@ -4,16 +4,19 @@ import type { BreadcrumbItem } from "~/types/ui/BreadcrumbItem";
 
 interface AppBreadcrumbsProps {
     items: BreadcrumbItem[];
+    maxItems?: number;
 }
 
-const { items } = defineProps<AppBreadcrumbsProps>();
+const { items, maxItems = 3 } = defineProps<AppBreadcrumbsProps>();
+
+const visibleItems = computed(() => items.slice(-maxItems));
 </script>
 
 <template>
     <nav :aria-label="LayoutText.BreadcrumbsLabel">
         <ol class="flex flex-wrap items-center gap-2">
             <li
-                v-for="(item, index) in items"
+                v-for="(item, index) in visibleItems"
                 :key="item.label"
                 class="flex items-center gap-2"
             >

@@ -43,7 +43,7 @@ const emit = defineEmits<{
                         />
                     </li>
                 </ul>
-                <AppButton variant="outline" class="w-full" @click="emit('clear')">
+                <AppButton variant="outline" class="self-start" @click="emit('clear')">
                     {{ ResultsText.ClearFilters }}
                 </AppButton>
             </div>

@@ -16,12 +16,12 @@ const emit = defineEmits<{
     <button
         type="button"
         :aria-label="`${LayoutText.RemoveChip} ${label}`"
-        class="group inline-flex h-12 cursor-pointer items-center gap-3 rounded-control border border-primary bg-primary-soft pr-3 pl-4 text-primary-dark transition-colors hover:bg-primary-tint-2"
+        class="group inline-flex min-h-12 max-w-full cursor-pointer items-center gap-3 rounded-control py-2 text-left border border-primary bg-primary-soft pr-3 pl-4 text-primary-dark transition-colors hover:bg-primary-tint-2"
         @click="emit('remove')"
     >
-        <span>{{ label }}</span>
+        <span class="min-w-0 break-words">{{ label }}</span>
         <span
-            class="flex size-6 items-center justify-center rounded-badge transition-colors group-hover:bg-white"
+            class="flex size-6 shrink-0 items-center justify-center rounded-badge transition-colors group-hover:bg-white"
             aria-hidden="true"
         >
             <svg

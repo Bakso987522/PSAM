@@ -22,7 +22,7 @@ const {
 } = defineProps<AppButtonProps>();
 
 const baseClasses =
-    "inline-flex h-12 items-center justify-center rounded-control border border-primary transition-colors";
+    "inline-flex min-h-12 max-w-full items-center justify-center gap-2 rounded-control border border-primary py-2 text-center transition-colors";
 
 const variantClasses = {
     primary: "bg-primary text-white hover:bg-primary-dark",
@@ -32,9 +32,9 @@ const variantClasses = {
 
 const sizeClasses = computed(() => {
     if (iconOnly === "mobile") {
-        return "w-12 lg:w-auto lg:px-5";
+        return "w-12 shrink-0 lg:w-auto lg:px-5";
     }
-    return iconOnly ? "w-12" : "px-5";
+    return iconOnly ? "w-12 shrink-0" : "min-w-12 px-5";
 });
 </script>
 

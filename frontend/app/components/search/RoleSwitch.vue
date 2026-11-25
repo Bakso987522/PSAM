@@ -16,13 +16,13 @@ const labelId = useId();
             v-model="role"
             :aria-labelledby="labelId"
             orientation="horizontal"
-            class="grid grid-cols-2 gap-4"
+            class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4"
         >
             <RadioGroupItem
                 v-for="option in ROLE_OPTIONS"
                 :key="option.value"
                 :value="option.value"
-                class="h-12 rounded-control border border-primary bg-white text-primary transition-colors hover:bg-primary-soft data-[state=checked]:bg-primary-soft"
+                class="min-h-12 w-full rounded-control border border-primary bg-white px-5 py-2 text-primary sm:w-auto transition-colors hover:bg-primary-soft data-[state=checked]:bg-primary-soft"
             >
                 {{ option.label }}
             </RadioGroupItem>

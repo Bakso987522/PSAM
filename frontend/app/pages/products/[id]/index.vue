@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ArrowLeft, RotateCcw } from "@lucide/vue";
 import Container from "~/components/layout/Container.vue";
+import PageToolbar from "~/components/layout/PageToolbar.vue";
 import LegalNotice from "~/components/product/LegalNotice.vue";
 import ProductActions from "~/components/product/ProductActions.vue";
 import ProductDetails from "~/components/product/ProductDetails.vue";
 import UsageList from "~/components/product/UsageList.vue";
 import EmptyResults from "~/components/results/EmptyResults.vue";
-import AppBreadcrumbs from "~/components/ui/AppBreadcrumbs.vue";
 import AppButton from "~/components/ui/AppButton.vue";
 import { ROUTES } from "~/constants/routes";
 import { PageTitle } from "~/enums/PageTitle";
@@ -48,29 +48,26 @@ useHead({
 
 <template>
     <Container class="mx-auto w-full max-w-220 gap-6 py-8 sm:px-10 lg:max-w-264">
-        <div class="flex items-center justify-between gap-4">
-            <AppBreadcrumbs :items="breadcrumbs" />
-            <div class="flex shrink-0 gap-2">
-                <AppButton
-                    variant="outline"
-                    icon-only="mobile"
-                    :aria-label="ProductText.BackToResults"
-                    @click="goBack"
-                >
-                    <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ProductText.BackToResults }}</span>
-                </AppButton>
-                <AppButton
-                    variant="soft"
-                    icon-only="mobile"
-                    :to="ROUTES.home"
-                    :aria-label="ResultsText.NewSearch"
-                >
-                    <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
-                </AppButton>
-            </div>
-        </div>
+        <PageToolbar :items="breadcrumbs">
+            <AppButton
+                variant="outline"
+                icon-only="mobile"
+                :aria-label="ProductText.BackToResults"
+                @click="goBack"
+            >
+                <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ProductText.BackToResults }}</span>
+            </AppButton>
+            <AppButton
+                variant="soft"
+                icon-only="mobile"
+                :to="ROUTES.home"
+                :aria-label="ResultsText.NewSearch"
+            >
+                <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
+            </AppButton>
+        </PageToolbar>
 
         <p v-if="status === 'pending'" class="text-muted" role="status">
             {{ ProductText.Loading }}

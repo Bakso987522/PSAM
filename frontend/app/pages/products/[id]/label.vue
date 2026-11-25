@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ArrowLeft, RotateCcw } from "@lucide/vue";
 import Container from "~/components/layout/Container.vue";
+import PageToolbar from "~/components/layout/PageToolbar.vue";
 import EmptyResults from "~/components/results/EmptyResults.vue";
-import AppBreadcrumbs from "~/components/ui/AppBreadcrumbs.vue";
 import AppButton from "~/components/ui/AppButton.vue";
 import { API_ENDPOINTS } from "~/constants/api";
 import { ROUTES } from "~/constants/routes";
@@ -49,29 +49,26 @@ useHead({
 
 <template>
     <Container class="mx-auto w-full max-w-220 gap-6 py-8 sm:px-10">
-        <div class="flex items-center justify-between gap-4">
-            <AppBreadcrumbs :items="breadcrumbs" />
-            <div class="flex shrink-0 gap-2">
-                <AppButton
-                    variant="outline"
-                    icon-only="mobile"
-                    :aria-label="ProductText.Back"
-                    @click="goBack"
-                >
-                    <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ProductText.Back }}</span>
-                </AppButton>
-                <AppButton
-                    variant="soft"
-                    icon-only="mobile"
-                    :to="ROUTES.home"
-                    :aria-label="ResultsText.NewSearch"
-                >
-                    <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
-                    <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
-                </AppButton>
-            </div>
-        </div>
+        <PageToolbar :items="breadcrumbs">
+            <AppButton
+                variant="outline"
+                icon-only="mobile"
+                :aria-label="ProductText.Back"
+                @click="goBack"
+            >
+                <ArrowLeft class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ProductText.Back }}</span>
+            </AppButton>
+            <AppButton
+                variant="soft"
+                icon-only="mobile"
+                :to="ROUTES.home"
+                :aria-label="ResultsText.NewSearch"
+            >
+                <RotateCcw class="size-5 lg:hidden" aria-hidden="true" />
+                <span class="hidden lg:inline">{{ ResultsText.NewSearch }}</span>
+            </AppButton>
+        </PageToolbar>
 
         <p v-if="status === 'pending'" class="text-muted" role="status">
             {{ ProductText.Loading }}
@@ -103,7 +100,7 @@ useHead({
 
                 <div class="flex flex-wrap gap-2 sm:gap-3">
                     <AppButton
-                        class="flex-1 sm:flex-none"
+                        class="w-full sm:w-auto"
                         :href="API_ENDPOINTS.label(product.idSor, product.name)"
                         external
                     >
@@ -111,7 +108,6 @@ useHead({
                     </AppButton>
                     <AppButton
                         variant="outline"
-                        class="flex-1 sm:flex-none"
                         :href="API_ENDPOINTS.label(product.idSor, product.name, true)"
                         download
                     >
@@ -119,7 +115,6 @@ useHead({
                     </AppButton>
                     <AppButton
                         variant="outline"
-                        class="flex-1 sm:flex-none"
                         :to="ROUTES.product(product.idSor)"
                     >
                         {{ ProductText.BackToCard }}
